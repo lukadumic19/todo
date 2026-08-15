@@ -1,5 +1,5 @@
 /* Service worker: cache-first, så appen virker offline på telefonen. */
-const CACHE = 'opgaver-v1';
+const CACHE = 'opgaver-v2';
 const ASSETS = [
   './',
   './index.html',

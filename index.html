@@ -49,8 +49,8 @@ input,textarea,select{font:inherit;color:inherit}
 
 /* ---------- Header ---------- */
 .hdr{display:flex;align-items:center;gap:8px;min-height:48px;margin-bottom:8px}
-.hdr h1{font-size:22px;font-weight:600;letter-spacing:-0.01em;flex:1}
-.hdr .sub{font-size:13px;color:var(--muted);margin-top:2px;font-weight:400}
+.hdr h1{font-size:22px;font-weight:600;letter-spacing:-0.01em;flex:1;min-width:0}
+.hdr .sub{display:block;font-size:13px;color:var(--muted);margin-top:2px;font-weight:400}
 .iconbtn{
   width:44px;height:44px;display:flex;align-items:center;justify-content:center;
   color:var(--muted);border-radius:10px;flex:none;
@@ -58,81 +58,20 @@ input,textarea,select{font:inherit;color:inherit}
 .iconbtn:active{background:rgba(27,31,29,0.06)}
 .backbtn{margin-left:-12px;color:var(--accent)}
 
-/* ---------- Category front page ---------- */
+/* ---------- Kategori-forside ---------- */
 .catrow{
   display:flex;align-items:center;gap:12px;width:100%;
   background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
   padding:14px;margin-bottom:8px;min-height:56px;
 }
 .catrow:active{background:#FAFBFA}
-.catdot{width:10px;height:10px;border-radius:50%;flex:none}
-.catname{flex:1;font-size:16px;font-weight:500}
+.catdot{width:10px;height:10px;border-radius:50%;flex:none;display:inline-block}
+.catname{flex:1;font-size:16px;font-weight:500;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .catcount{font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
 .catcount.zero{color:#B8BFBA}
-.chev{color:#B8BFBA;flex:none}
+.chev{color:#B8BFBA;flex:none;display:flex}
 
-/* ---------- Tabs (category page) ---------- */
-.tabs{display:flex;border-bottom:1px solid var(--line);margin:4px 0 14px}
-.tab{
-  flex:1;text-align:center;padding:12px 4px;min-height:44px;
-  font-size:14px;font-weight:500;color:var(--muted);
-  border-bottom:2px solid transparent;margin-bottom:-1px;
-}
-.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
-.tab .n{font-variant-numeric:tabular-nums}
-
-/* ---------- Task cards ---------- */
-.task-card{
-  position:relative;overflow:hidden;
-  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
-  padding:12px 8px 12px 16px;margin-bottom:8px;
-  display:flex;align-items:flex-start;gap:4px;
-  transition:transform .28s ease,opacity .28s ease;
-}
-.task-card.leaving{transform:translateX(110%);opacity:0}
-@media (prefers-reduced-motion: reduce){
-  .task-card{transition:none}
-}
-.stripe{position:absolute;left:0;top:0;bottom:0;width:4px}
-.checkwrap{width:44px;height:44px;display:flex;align-items:center;justify-content:center;flex:none;margin:-8px 0 -8px -8px}
-.checkbox{
-  width:26px;height:26px;border-radius:50%;border:1.5px solid #A9B1AB;
-  display:flex;align-items:center;justify-content:center;color:transparent;flex:none;
-  background:var(--card);
-}
-.checkbox.on{background:var(--accent);border-color:var(--accent);color:#fff}
-.task-body{flex:1;min-width:0;padding-top:2px}
-.task-title{font-size:16px;font-weight:500;line-height:1.35;overflow-wrap:break-word}
-.task-title.done{color:var(--muted)}
-.task-note{font-size:14px;color:var(--muted);line-height:1.4;margin-top:3px;white-space:pre-wrap;overflow-wrap:break-word}
-.task-meta{font-size:12px;color:var(--muted);margin-top:6px;display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
-.task-meta .decided{color:var(--accent);font-weight:500}
-.menubtn{width:44px;height:44px;display:flex;align-items:center;justify-content:center;color:#A9B1AB;flex:none;margin:-8px 0}
-.convertbtn{
-  display:inline-flex;align-items:center;gap:6px;margin-top:10px;
-  border:1px solid var(--accent);color:var(--accent);border-radius:8px;
-  padding:10px 14px;font-size:14px;font-weight:500;min-height:40px;
-}
-.convertbtn:active{background:rgba(31,78,90,0.08)}
-.ideatag{
-  display:inline-block;font-size:11px;font-weight:500;color:var(--muted);
-  border:1px solid var(--line);border-radius:5px;padding:1px 6px;
-  vertical-align:2px;margin-left:8px;
-}
-
-/* ---------- Empty states ---------- */
-.empty{padding:56px 24px;text-align:center;color:var(--muted);font-size:15px;line-height:1.5}
-
-/* ---------- Overview ---------- */
-.summaryline{font-size:14px;color:var(--muted);margin:0 0 16px;font-variant-numeric:tabular-nums}
-.grouphdr{
-  display:flex;align-items:center;gap:8px;margin:18px 0 8px;
-  font-size:13px;font-weight:600;color:var(--muted);
-  text-transform:uppercase;letter-spacing:0.04em;
-}
-.grouphdr .catdot{width:8px;height:8px}
-
-/* ---------- Decisions ---------- */
+/* ---------- Chips ---------- */
 .chiprow{display:flex;gap:8px;overflow-x:auto;padding:2px 0 12px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .chiprow::-webkit-scrollbar{display:none}
 .chip{
@@ -142,18 +81,108 @@ input,textarea,select{font:inherit;color:inherit}
 }
 .chip.active{background:var(--accent);border-color:var(--accent);color:#fff}
 .chip .catdot{width:8px;height:8px}
-.dec-card{
+.chip .n{font-variant-numeric:tabular-nums;opacity:0.75}
+
+/* ---------- Rækker/kort ---------- */
+.item-row{
   position:relative;overflow:hidden;
   background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
-  padding:12px 14px 12px 16px;margin-bottom:8px;width:100%;display:block;
+  padding:12px 8px 12px 16px;margin-bottom:8px;width:100%;
+  display:flex;align-items:flex-start;gap:4px;text-align:left;
+  transition:transform .28s ease,opacity .28s ease;
 }
-.dec-top{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin-bottom:4px}
-.dec-title{font-size:15px;font-weight:500;line-height:1.35}
-.dec-note{font-size:14px;color:var(--text);line-height:1.45;margin-top:4px}
-.dec-note:before{content:"”";color:#A9B1AB;margin-right:2px}
-.dec-note:after{content:"”";color:#A9B1AB;margin-left:2px}
+.item-row.leaving{transform:translateX(110%);opacity:0}
+@media (prefers-reduced-motion: reduce){
+  .item-row{transition:none}
+}
+.stripe{position:absolute;left:0;top:0;bottom:0;width:4px}
+.checkwrap{width:44px;height:44px;display:flex;align-items:center;justify-content:center;flex:none;margin:-8px 0 -8px -8px}
+.checkbox{
+  width:26px;height:26px;border-radius:50%;border:1.5px solid #A9B1AB;
+  display:flex;align-items:center;justify-content:center;color:transparent;flex:none;
+  background:var(--card);
+}
+.checkbox.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.row-body{flex:1;min-width:0;padding-top:2px}
+.row-title{font-size:16px;font-weight:500;line-height:1.35;overflow-wrap:break-word}
+.row-title.dim{color:var(--muted)}
+.row-snippet{font-size:14px;color:var(--muted);line-height:1.4;margin-top:3px;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:break-word}
+.row-meta{font-size:12px;color:var(--muted);margin-top:6px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.row-meta .warn{color:var(--danger);font-weight:500}
+.row-meta .soon{color:var(--accent);font-weight:500}
+.row-chev{width:32px;height:44px;display:flex;align-items:center;justify-content:center;color:#B8BFBA;flex:none;margin:-8px 0}
+.convertbtn{
+  display:inline-flex;align-items:center;gap:6px;margin-top:10px;
+  border:1px solid var(--accent);color:var(--accent);border-radius:8px;
+  padding:10px 14px;font-size:14px;font-weight:500;min-height:40px;
+}
+.convertbtn:active{background:rgba(31,78,90,0.08)}
 
-/* ---------- Fab / primary button ---------- */
+.badge{
+  display:inline-block;font-size:11px;font-weight:500;
+  border:1px solid var(--line);border-radius:5px;padding:2px 7px;color:var(--muted);
+  white-space:nowrap;
+}
+.badge.active{border-color:var(--accent);color:var(--accent)}
+.badge.retired{opacity:0.7}
+
+/* ---------- Sektioner ---------- */
+.grouphdr{
+  display:flex;align-items:center;gap:8px;margin:18px 0 8px;
+  font-size:13px;font-weight:600;color:var(--muted);
+  text-transform:uppercase;letter-spacing:0.04em;
+}
+.grouphdr .n{font-weight:500}
+.empty{padding:40px 24px;text-align:center;color:var(--muted);font-size:15px;line-height:1.5}
+
+/* ---------- Detaljevisning ---------- */
+.detail-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:14px 16px;margin-bottom:10px;position:relative;overflow:hidden}
+.detail-title{font-size:19px;font-weight:600;line-height:1.3;overflow-wrap:break-word}
+.detail-cat{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--muted);margin-top:6px}
+.typetag{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px}
+.fieldrow{padding:10px 0;border-bottom:1px solid #EDF1EE}
+.fieldrow:last-child{border-bottom:none}
+.fieldrow .fl{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:3px}
+.fieldrow .fv{font-size:15px;line-height:1.45;white-space:pre-wrap;overflow-wrap:break-word}
+.fieldrow .fv.mut{color:var(--muted)}
+.linkrow{
+  display:flex;align-items:center;gap:10px;width:100%;
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:12px 14px;margin-bottom:8px;min-height:48px;font-size:14px;
+}
+.linkrow:active{background:#FAFBFA}
+.linkrow .lr-main{flex:1;min-width:0;display:block}
+.linkrow .lr-title{display:block;font-weight:500;font-size:15px}
+.linkrow .lr-sub{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+
+/* ---------- Segmenteret kontrol / switch ---------- */
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.seg.cols3{grid-template-columns:1fr 1fr 1fr}
+.seg button{
+  border:1px solid var(--line);border-radius:8px;background:var(--card);
+  padding:11px 8px;min-height:44px;font-size:14px;font-weight:500;color:var(--muted);
+  text-align:center;
+}
+.seg button.on{border-color:var(--accent);color:var(--accent);background:rgba(31,78,90,0.06)}
+.switchrow{display:flex;align-items:center;gap:12px;min-height:48px;width:100%}
+.switchrow .sw-label{flex:1;font-size:15px;font-weight:500}
+.switch{
+  width:50px;height:30px;border-radius:15px;background:#C9D1CB;flex:none;position:relative;
+  transition:background .15s ease;display:inline-block;
+}
+.switch:after{
+  content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;
+  background:#fff;transition:transform .15s ease;box-shadow:0 1px 2px rgba(27,31,29,0.2);
+}
+.switch.on{background:var(--accent)}
+.switch.on:after{transform:translateX(20px)}
+@media (prefers-reduced-motion: reduce){
+  .switch,.switch:after{transition:none}
+}
+
+/* ---------- Knapper ---------- */
 .fabwrap{
   position:fixed;left:0;right:0;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom));
   padding:12px 16px;max-width:560px;margin:0 auto;
@@ -171,8 +200,9 @@ input,textarea,select{font:inherit;color:inherit}
 .btn-secondary{background:var(--card);border:1px solid var(--line);color:var(--text)}
 .btn-ghost{color:var(--accent);background:none}
 .btn-danger{background:var(--danger);color:#fff}
+.btn-dangerghost{color:var(--danger);background:none}
 
-/* ---------- Bottom nav ---------- */
+/* ---------- Bundnavigation ---------- */
 .nav{
   position:fixed;left:0;right:0;bottom:0;z-index:20;
   background:var(--card);border-top:1px solid var(--line);
@@ -181,57 +211,74 @@ input,textarea,select{font:inherit;color:inherit}
 .nav-inner{max-width:560px;margin:0 auto;display:flex;height:var(--nav-h)}
 .nav-item{
   flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
-  color:var(--muted);font-size:11px;font-weight:500;text-align:center;
+  color:var(--muted);font-size:10.5px;font-weight:500;text-align:center;
 }
 .nav-item.active{color:var(--accent)}
 
-/* ---------- Sheets ---------- */
+/* ---------- Ark (sheets) ---------- */
 .overlay{position:fixed;inset:0;background:rgba(27,31,29,0.4);z-index:30;display:flex;align-items:flex-end}
 .sheet{
   background:var(--card);width:100%;max-width:560px;margin:0 auto;
   border-radius:var(--radius) var(--radius) 0 0;
   padding:20px 16px calc(16px + env(safe-area-inset-bottom));
+  max-height:88vh;overflow-y:auto;-webkit-overflow-scrolling:touch;
 }
 .sheet h2{font-size:17px;font-weight:600;margin-bottom:14px}
 .sheet .hint{font-size:13px;color:var(--muted);margin:-8px 0 14px;line-height:1.4}
 .field{margin-bottom:12px}
 .field label{display:block;font-size:13px;font-weight:500;color:var(--muted);margin-bottom:6px}
+.field label .opt{font-weight:400;color:#A2A9A4}
 .input{
   width:100%;border:1px solid var(--line);border-radius:var(--radius);
   padding:12px;font-size:16px;background:#FAFBFA;color:var(--text);
+  min-height:46px;
 }
 .input:focus{border-color:var(--accent);outline:none}
-textarea.input{resize:none;min-height:88px;line-height:1.4}
+textarea.input{resize:none;min-height:66px;line-height:1.4}
+input[type="date"].input{-webkit-appearance:none;appearance:none}
 .sheet-actions{display:flex;flex-direction:column;gap:8px;margin-top:16px}
+.sheet .taskref{font-size:14px;color:var(--muted);margin:-6px 0 14px;line-height:1.4}
 .menu-item{
   display:flex;align-items:center;gap:12px;width:100%;
-  padding:14px 4px;min-height:48px;font-size:16px;
-  border-bottom:1px solid var(--line);
+  padding:14px 4px;min-height:52px;font-size:16px;font-weight:500;
+  border-bottom:1px solid #EDF1EE;
 }
 .menu-item:last-of-type{border-bottom:none}
-.menu-item.danger{color:var(--danger)}
 .menu-item svg{color:var(--muted);flex:none}
-.menu-item.danger svg{color:var(--danger)}
-.sheet .taskref{font-size:14px;color:var(--muted);margin:-6px 0 14px;line-height:1.4}
+.menu-item .mi-title{display:block}
+.menu-item .mi-sub{display:block;font-size:12.5px;color:var(--muted);font-weight:400;margin-top:1px}
+.menu-item.light .mi-title{color:var(--muted)}
 
-/* ---------- Settings ---------- */
+/* ---------- Indstillinger ---------- */
 .settings-section{margin-bottom:28px}
 .settings-section > h2{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:10px}
 .setcat{
   background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
   padding:8px 12px;margin-bottom:8px;
 }
-.setcat-row{display:flex;align-items:center;gap:10px}
+.setcat-row{display:flex;align-items:center;gap:6px}
 .swatchbtn{width:44px;height:44px;display:flex;align-items:center;justify-content:center;flex:none;margin-left:-8px}
-.swatch{width:22px;height:22px;border-radius:50%;border:1px solid rgba(27,31,29,0.12)}
+.swatch{width:22px;height:22px;border-radius:50%;border:1px solid rgba(27,31,29,0.12);display:inline-block}
 .setcat input{border:none;background:none;flex:1;font-size:16px;padding:10px 0;min-width:0}
 .setcat .del{color:var(--danger);font-size:14px;font-weight:500;padding:10px 4px;min-height:44px;flex:none}
+.ordbtn{width:38px;height:44px;display:flex;align-items:center;justify-content:center;color:var(--muted);flex:none}
+.ordbtn:disabled{opacity:0.25}
 .palette{display:flex;gap:10px;flex-wrap:wrap;padding:6px 0 10px 2px}
 .palette button{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(27,31,29,0.12)}
 .palette button.sel{outline:2px solid var(--accent);outline-offset:2px}
 .settings-note{font-size:13px;color:var(--muted);line-height:1.5;margin-top:8px}
 .filelabel{cursor:pointer;position:relative}
 .filelabel input{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden}
+
+/* ---------- Versioner ---------- */
+.verrow{
+  display:flex;align-items:baseline;gap:10px;width:100%;
+  padding:12px 4px;min-height:46px;border-bottom:1px solid #EDF1EE;font-size:14px;
+}
+.verrow:last-of-type{border-bottom:none}
+.verrow .v-name{font-weight:500}
+.verrow .v-date{color:var(--muted);font-size:13px}
+.verrow .v-cur{margin-left:auto;font-size:12px;color:var(--accent);font-weight:500}
 </style>
 </head>
 <body>
@@ -244,9 +291,10 @@ textarea.input{resize:none;min-height:88px;line-height:1.4}
 const {useState,useEffect,useMemo,useRef} = React;
 const html = htm.bind(React.createElement);
 
-/* ================= Data ================= */
+/* ================= Konstanter ================= */
 
 const STORAGE_KEY = 'lukas-todo-v1';
+const V1_BACKUP_KEY = 'lukas-todo-v1-backup';
 
 const PALETTE = ['#5B7C99','#6E9075','#A8865C','#8A6E8F','#5E8D87','#A56A5A','#8A8B5F','#8B9089'];
 
@@ -255,129 +303,190 @@ const DEFAULT_CATEGORY_NAMES = [
   'Personalemøder','Ledelse','Standarder','Andet'
 ];
 
-function defaultData(){
-  return {
-    categories: DEFAULT_CATEGORY_NAMES.map((name,i)=>({id:'c'+(i+1), name, color:PALETTE[i], order:i})),
-    tasks: []
-  };
-}
+const TASK_STATUS = {
+  not_started:'Ikke startet',
+  in_progress:'I gang',
+  waiting:'Afventer',
+  done:'Færdig'
+};
+const PRIORITY = { high:'Høj', normal:'Normal', low:'Lav' };
+const TYPE_LABEL = { task:'Opgave', decision:'Beslutning', agreement:'Aftale', note:'Note', standard:'Standard' };
+const STD_STATUS = { draft:'Kladde', active:'Gældende', retired:'Udgået' };
+
+const STD_FIELDS = [
+  ['formaal','Formål'],
+  ['gaelderFor','Gælder for'],
+  ['beskrivelse','Beskrivelse'],
+  ['fremgangsmaade','Fremgangsmåde'],
+  ['opmaerksomhed','Vigtige opmærksomhedspunkter'],
+  ['ansvar','Ansvar'],
+  ['undtagelser','Undtagelser'],
+  ['baggrund','Baggrund/beslutning']
+];
+
+/* ================= Hjælpere ================= */
 
 function uid(){
   return (window.crypto && crypto.randomUUID) ? crypto.randomUUID()
     : 'id-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10);
 }
-
-function isValidData(d){
-  return d && Array.isArray(d.categories) && Array.isArray(d.tasks)
-    && d.categories.every(c=>c && typeof c.id==='string' && typeof c.name==='string')
-    && d.tasks.every(t=>t && typeof t.id==='string' && typeof t.title==='string' && typeof t.categoryId==='string');
+function nowIso(){ return new Date().toISOString(); }
+function todayStr(){
+  const d = new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 }
-
-function loadData(){
-  try{
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if(raw){
-      const d = JSON.parse(raw);
-      if(isValidData(d)) return d;
-    }
-  }catch(e){ /* falder tilbage til standard */ }
-  return defaultData();
-}
-
-function persist(data){
-  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
-  catch(e){ /* fx fuld lagerplads — appen kører videre i hukommelsen */ }
-}
-
 function fmtDate(iso){
   if(!iso) return '';
   const d = new Date(iso);
   if(isNaN(d)) return '';
   return d.toLocaleDateString('da-DK',{day:'numeric',month:'short',year:'numeric'});
 }
-
+function fmtDay(s){
+  if(!s) return '';
+  const p = String(s).slice(0,10).split('-');
+  if(p.length!==3) return '';
+  const d = new Date(+p[0], +p[1]-1, +p[2]);
+  const opts = {day:'numeric',month:'short'};
+  if(+p[0] !== new Date().getFullYear()) opts.year = 'numeric';
+  return d.toLocaleDateString('da-DK',opts);
+}
+function daysUntil(s){
+  if(!s) return null;
+  const p = String(s).slice(0,10).split('-');
+  const t = new Date(); const a = new Date(t.getFullYear(),t.getMonth(),t.getDate());
+  const b = new Date(+p[0], +p[1]-1, +p[2]);
+  return Math.round((b-a)/86400000);
+}
+function deadlineText(s){
+  const n = daysUntil(s);
+  if(n===null) return null;
+  if(n<0) return {text:'Overskredet · '+fmtDay(s), cls:'warn'};
+  if(n===0) return {text:'I dag', cls:'warn'};
+  if(n===1) return {text:'I morgen', cls:'soon'};
+  if(n<=7) return {text:fmtDay(s), cls:'soon'};
+  return {text:fmtDay(s), cls:''};
+}
 function reducedMotion(){
   return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+function byDesc(key){ return (a,b)=>String(b[key]||'').localeCompare(String(a[key]||'')); }
+
+/* ================= Data, migration og persistens ================= */
+
+function defaultData(){
+  return {
+    schemaVersion: 2,
+    categories: DEFAULT_CATEGORY_NAMES.map((name,i)=>({id:'c'+(i+1), name, color:PALETTE[i], order:i})),
+    items: [],
+    relations: []
+  };
+}
+
+function isV2(d){
+  return d && d.schemaVersion===2 && Array.isArray(d.categories) && Array.isArray(d.items) && Array.isArray(d.relations);
+}
+function isV1(d){
+  return d && !d.schemaVersion && Array.isArray(d.categories) && Array.isArray(d.tasks);
+}
+
+function migrateV1(d){
+  const items = [];
+  const relations = [];
+  for(const t of (d.tasks||[])){
+    const task = {
+      id: t.id || uid(), type:'task', categoryId: t.categoryId, title: t.title||'',
+      createdAt: t.createdAt || nowIso(), updatedAt: t.createdAt || nowIso(),
+      followUp: null,
+      status: t.status==='done' ? 'done' : 'not_started',
+      idea: t.status==='idea',
+      deadline: null, priority: 'normal', myDay: false, myDayAt: null,
+      description: t.note || '', waitingFor: '',
+      completedAt: t.completedAt || null
+    };
+    items.push(task);
+    if(t.decidedAt || t.decisionNote){
+      const dec = {
+        id: uid(), type:'decision', categoryId: t.categoryId, title: t.title||'',
+        createdAt: t.decidedAt || t.createdAt || nowIso(), updatedAt: t.decidedAt || t.createdAt || nowIso(),
+        followUp: null,
+        decidedOn: String(t.decidedAt || t.createdAt || nowIso()).slice(0,10),
+        what: t.decisionNote || '', rationale:'', involved:'', notes:''
+      };
+      items.push(dec);
+      relations.push({id:uid(), fromId:dec.id, toId:task.id, kind:'skabte'});
+    }
+  }
+  return { schemaVersion:2, categories: d.categories||[], items, relations };
+}
+
+function normalize(d){
+  if(isV2(d)) return d;
+  if(isV1(d)){
+    try{
+      if(!localStorage.getItem(V1_BACKUP_KEY)) localStorage.setItem(V1_BACKUP_KEY, JSON.stringify(d));
+    }catch(e){}
+    return migrateV1(d);
+  }
+  return null;
+}
+
+function loadData(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){
+      const m = normalize(JSON.parse(raw));
+      if(m) return m;
+    }
+  }catch(e){}
+  return defaultData();
+}
+function persist(data){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }catch(e){}
+}
+
+function newItem(type, categoryId, extra){
+  const base = {
+    id: uid(), type, categoryId, title:'',
+    createdAt: nowIso(), updatedAt: nowIso(), followUp: null
+  };
+  const perType = {
+    task: {status:'not_started', idea:false, deadline:null, priority:'normal', myDay:false, myDayAt:null, description:'', waitingFor:'', completedAt:null},
+    decision: {decidedOn: todayStr(), what:'', rationale:'', involved:'', notes:''},
+    agreement: {agreedOn: todayStr(), what:'', withWhom:'', deadline:null},
+    note: {noteDate: todayStr(), text:''},
+    standard: {status:'draft', fields:{}, versions:[]}
+  };
+  return Object.assign(base, perType[type], extra||{});
 }
 
 /* ================= Ikoner ================= */
 
 const Icon = {
+  sun: () => html`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><line x1="12" y1="2.5" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="21.5"/><line x1="2.5" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="21.5" y2="12"/><line x1="5.3" y1="5.3" x2="7" y2="7"/><line x1="17" y1="17" x2="18.7" y2="18.7"/><line x1="5.3" y1="18.7" x2="7" y2="17"/><line x1="17" y1="7" x2="18.7" y2="5.3"/></svg>`,
   grid: () => html`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg>`,
-  rows: () => html`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="14" y2="18"/></svg>`,
-  clock: () => html`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><polyline points="12 7.5 12 12 15.5 14"/></svg>`,
+  stamp: () => html`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 21h14"/><path d="M5 17h14v-3.5a1.5 1.5 0 0 0-1.5-1.5h-2.6c-.9 0-1.5-.9-1.2-1.7l.8-3A2.7 2.7 0 1 0 9.4 7l.9 3.3c.2.8-.4 1.7-1.2 1.7H6.5A1.5 1.5 0 0 0 5 13.5z"/></svg>`,
+  book: () => html`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M20 17v4H6.5A2.5 2.5 0 0 1 4 18.5"/></svg>`,
   gear: () => html`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.03 1.56V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1.11-1.56 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.7 1.7 0 0 0 .34-1.87 1.7 1.7 0 0 0-1.56-1.03H3a2 2 0 1 1 0-4h.09a1.7 1.7 0 0 0 1.56-1.11 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34h.08A1.7 1.7 0 0 0 10 4.09V4a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1.03 1.56 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87v.08a1.7 1.7 0 0 0 1.56 1.03H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.51 1.03z"/></svg>`,
   back: () => html`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="14.5 5.5 8 12 14.5 18.5"/></svg>`,
   chevron: () => html`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="9.5 5.5 16 12 9.5 18.5"/></svg>`,
   check: () => html`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="4.5 12.5 9.5 17.5 19.5 6.5"/></svg>`,
-  dots: () => html`<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5.5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="18.5" r="1.7"/></svg>`,
   arrow: () => html`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg>`,
   pen: () => html`<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M17 3a2.8 2.8 0 0 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></svg>`,
-  stamp: () => html`<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 21h14"/><path d="M5 17h14v-3.5a1.5 1.5 0 0 0-1.5-1.5h-2.6c-.9 0-1.5-.9-1.2-1.7l.8-3A2.7 2.7 0 1 0 9.4 7l.9 3.3c.2.8-.4 1.7-1.2 1.7H6.5A1.5 1.5 0 0 0 5 13.5z"/></svg>`,
   trash: () => html`<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="3 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/><line x1="10" y1="10.5" x2="10" y2="17.5"/><line x1="14" y1="10.5" x2="14" y2="17.5"/></svg>`,
-  plus: () => html`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`
+  plus: () => html`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`,
+  circlecheck: () => html`<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><polyline points="8 12.5 11 15.5 16.5 9"/></svg>`,
+  calendar: () => html`<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="16" rx="2"/><line x1="3.5" y1="10" x2="20.5" y2="10"/><line x1="8" y1="2.5" x2="8" y2="6.5"/><line x1="16" y1="2.5" x2="16" y2="6.5"/></svg>`,
+  doc: () => html`<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M6 2.5h8L19 7.5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-17a1 1 0 0 1 1-1z"/><polyline points="14 2.5 14 7.5 19 7.5"/><line x1="8.5" y1="12" x2="15.5" y2="12"/><line x1="8.5" y1="16" x2="13.5" y2="16"/></svg>`,
+  bulb: () => html`<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 1 3.5 10.9c-.8.6-1.2 1.3-1.3 2.1h-4.4c-.1-.8-.5-1.5-1.3-2.1A6 6 0 0 1 12 3z"/></svg>`,
+  bell: () => html`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 1 0-12 0c0 7-2.5 8.5-2.5 8.5h17S18 15 18 8"/><path d="M10 21a2.3 2.3 0 0 0 4 0"/></svg>`,
+  up: () => html`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="6 14.5 12 8.5 18 14.5"/></svg>`,
+  down: () => html`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="6 9.5 12 15.5 18 9.5"/></svg>`
 };
 
-/* ================= Genbrugte dele ================= */
+/* ================= Små byggesten ================= */
 
 function CatDot({color, size}){
   return html`<span className="catdot" style=${{background:color, width:size, height:size}} aria-hidden="true"></span>`;
-}
-
-function TaskCard({task, category, mode, onToggleDone, onConvert, onMenu, onOpen}){
-  // mode: 'open' | 'idea' | 'done' | 'overview'
-  const [leaving,setLeaving] = useState(false);
-
-  const complete = () => {
-    if(leaving) return;
-    if(reducedMotion()){ onToggleDone(task); return; }
-    setLeaving(true);
-    setTimeout(()=>onToggleDone(task), 290);
-  };
-
-  const isDone = task.status==='done';
-  const isIdea = task.status==='idea';
-  const showCheck = !isIdea;
-
-  const body = html`
-    <div className="task-body">
-      <div className=${'task-title'+(isDone?' done':'')}>
-        ${task.title}
-        ${mode==='overview' && isIdea ? html`<span className="ideatag">Idé</span>` : null}
-      </div>
-      ${task.note ? html`<div className="task-note">${task.note}</div>` : null}
-      ${isDone && task.completedAt ? html`<div className="task-meta">Færdig ${fmtDate(task.completedAt)}</div>` : null}
-      ${!isDone && task.decidedAt ? html`
-        <div className="task-meta"><span className="decided">Besluttet ${fmtDate(task.decidedAt)}</span>${task.decisionNote ? html`<span>${task.decisionNote}</span>` : null}</div>
-      ` : null}
-      ${mode==='idea' ? html`
-        <button className="convertbtn" onClick=${(e)=>{e.stopPropagation(); onConvert(task);}}>
-          <${Icon.arrow}/> Gør til opgave
-        </button>
-      ` : null}
-    </div>`;
-
-  return html`
-    <div className=${'task-card'+(leaving?' leaving':'')}
-         onClick=${mode==='overview' && onOpen ? ()=>onOpen(task) : undefined}
-         role=${mode==='overview' ? 'button' : undefined}
-         tabIndex=${mode==='overview' ? 0 : undefined}
-         onKeyDown=${mode==='overview' && onOpen ? (e)=>{if(e.key==='Enter') onOpen(task);} : undefined}>
-      <span className="stripe" style=${{background:category ? category.color : 'transparent'}}></span>
-      ${showCheck ? html`
-        <button className="checkwrap"
-                aria-label=${isDone ? 'Fortryd afkrydsning' : 'Markér som færdig'}
-                onClick=${(e)=>{e.stopPropagation(); isDone ? onToggleDone(task) : complete();}}>
-          <span className=${'checkbox'+(isDone?' on':'')}><${Icon.check}/></span>
-        </button>
-      ` : html`<span style=${{width:'8px'}}></span>`}
-      ${body}
-      ${onMenu ? html`
-        <button className="menubtn" aria-label="Menu for opgaven" onClick=${(e)=>{e.stopPropagation(); onMenu(task);}}>
-          <${Icon.dots}/>
-        </button>
-      ` : null}
-    </div>`;
 }
 
 function Sheet({onClose, children, label}){
@@ -389,10 +498,167 @@ function Sheet({onClose, children, label}){
     </div>`;
 }
 
+function Empty({text}){ return html`<div className="empty">${text}</div>`; }
+
+function Seg({options, value, onChange, cols3}){
+  return html`
+    <div className=${'seg'+(cols3?' cols3':'')}>
+      ${options.map(([k,label])=>html`
+        <button key=${k} className=${value===k?'on':''} aria-pressed=${value===k}
+                onClick=${()=>onChange(k)}>${label}</button>`)}
+    </div>`;
+}
+
+function SwitchRow({label, on, onToggle}){
+  return html`
+    <button className="switchrow" role="switch" aria-checked=${!!on} onClick=${onToggle}>
+      <span className="sw-label">${label}</span>
+      <span className=${'switch'+(on?' on':'')}></span>
+    </button>`;
+}
+
+function Field({label, value, muted}){
+  if(!value) return null;
+  return html`
+    <div className="fieldrow">
+      <div className="fl">${label}</div>
+      <div className=${'fv'+(muted?' mut':'')}>${value}</div>
+    </div>`;
+}
+
+/* ================= Rækker ================= */
+
+function taskMeta(t, category, showCategory){
+  const parts = [];
+  if(showCategory && category) parts.push(html`<span key="cat">${category.name}</span>`);
+  if(t.status==='done'){
+    if(t.completedAt) parts.push(html`<span key="done">Færdig ${fmtDate(t.completedAt)}</span>`);
+  }else{
+    const dl = deadlineText(t.deadline);
+    if(dl) parts.push(html`<span key="dl" className=${dl.cls}>${dl.text}</span>`);
+    if(t.priority==='high') parts.push(html`<span key="pri" className="warn">Høj</span>`);
+    if(t.priority==='low') parts.push(html`<span key="pri2">Lav prioritet</span>`);
+    if(t.status==='waiting') parts.push(html`<span key="w">Afventer${t.waitingFor?': '+t.waitingFor:''}</span>`);
+    if(t.followUp && t.followUp.due) parts.push(html`<span key="fu" className=${daysUntil(t.followUp.due)<=0?'warn':''}>Følg op ${fmtDay(t.followUp.due)}</span>`);
+  }
+  return parts;
+}
+
+function TaskRow({task, category, showCategory, onOpen, onToggleDone, onConvert}){
+  const [leaving,setLeaving] = useState(false);
+  const isDone = task.status==='done';
+  const complete = (e)=>{
+    e.stopPropagation();
+    if(isDone){ onToggleDone(task); return; }
+    if(leaving) return;
+    if(reducedMotion()){ onToggleDone(task); return; }
+    setLeaving(true);
+    setTimeout(()=>onToggleDone(task), 290);
+  };
+  const meta = taskMeta(task, category, showCategory);
+  return html`
+    <div className=${'item-row'+(leaving?' leaving':'')} role="button" tabIndex="0"
+         onClick=${()=>onOpen(task)}
+         onKeyDown=${(e)=>{if(e.key==='Enter' && e.target===e.currentTarget) onOpen(task);}}>
+      <span className="stripe" style=${{background:category?category.color:'transparent'}}></span>
+      ${task.idea ? html`<span style=${{width:'8px'}}></span>` : html`
+        <button className="checkwrap" aria-label=${isDone?'Fortryd afkrydsning':'Markér som færdig'} onClick=${complete}>
+          <span className=${'checkbox'+(isDone?' on':'')}><${Icon.check}/></span>
+        </button>`}
+      <div className="row-body">
+        <div className=${'row-title'+(isDone?' dim':'')}>${task.title}</div>
+        ${meta.length ? html`<div className="row-meta">${meta}</div>` : null}
+        ${onConvert ? html`
+          <button className="convertbtn" onClick=${(e)=>{e.stopPropagation(); onConvert(task);}}>
+            <${Icon.arrow}/> Gør til opgave
+          </button>` : null}
+      </div>
+      <span className="row-chev"><${Icon.chevron}/></span>
+    </div>`;
+}
+
+function PlainRow({item, category, showCategory, onOpen, snippet, meta, badge}){
+  return html`
+    <button className="item-row" onClick=${()=>onOpen(item)}>
+      <span className="stripe" style=${{background:category?category.color:'transparent'}}></span>
+      <span style=${{width:'8px'}}></span>
+      <div className="row-body">
+        <div className="row-title">${item.title} ${badge||null}</div>
+        ${snippet ? html`<div className="row-snippet">${snippet}</div>` : null}
+        ${meta && meta.length ? html`<div className="row-meta">${meta}</div>` : null}
+      </div>
+      <span className="row-chev"><${Icon.chevron}/></span>
+    </button>`;
+}
+
 /* ================= Skærme ================= */
 
-function CategoriesScreen({data, openCounts, onOpenCategory, onOpenSettings}){
+function TodayScreen({data, api, onOpenItem, onOpenSettings}){
+  const cats = Object.fromEntries(data.categories.map(c=>[c.id,c]));
+  const today = todayStr();
+  const active = data.items.filter(i=>i.type==='task' && !i.idea && i.status!=='done');
+
+  const followUps = data.items.filter(i=>{
+    if(!i.followUp || !i.followUp.due) return false;
+    if(i.type==='task' && (i.status==='done'||i.idea)) return false;
+    return i.followUp.due <= today;
+  }).sort((a,b)=>String(a.followUp.due).localeCompare(String(b.followUp.due)));
+
+  const myDay = active.filter(t=>t.myDay);
+  const myDayIds = new Set(myDay.map(t=>t.id));
+  const deadlines = active.filter(t=>{
+    if(myDayIds.has(t.id) || !t.deadline) return false;
+    const n = daysUntil(t.deadline);
+    return n!==null && n<=7;
+  }).sort((a,b)=>String(a.deadline).localeCompare(String(b.deadline)));
+
+  const dateSub = new Date().toLocaleDateString('da-DK',{weekday:'long', day:'numeric', month:'long'});
+  const nothing = followUps.length===0 && myDay.length===0 && deadlines.length===0;
+
+  return html`
+    <div className="screen">
+      <div className="hdr">
+        <h1>I dag<span className="sub">${dateSub.charAt(0).toUpperCase()+dateSub.slice(1)}</span></h1>
+        <button className="iconbtn" aria-label="Indstillinger" onClick=${onOpenSettings}><${Icon.gear}/></button>
+      </div>
+
+      ${nothing ? html`<${Empty} text="Ingenting kræver din opmærksomhed lige nu. Vælg opgaver til Min dag inde i en kategori."/>` : null}
+
+      ${followUps.length ? html`
+        <div>
+          <div className="grouphdr"><${Icon.bell}/> Opfølgninger</div>
+          ${followUps.map(i=>html`
+            <${PlainRow} key=${i.id} item=${i} category=${cats[i.categoryId]} onOpen=${onOpenItem}
+              badge=${html`<span className="badge">${TYPE_LABEL[i.type]}</span>`}
+              snippet=${i.followUp.note || null}
+              meta=${[html`<span key="d" className=${daysUntil(i.followUp.due)<0?'warn':'soon'}>Følg op ${fmtDay(i.followUp.due)}</span>`,
+                      cats[i.categoryId]?html`<span key="c">${cats[i.categoryId].name}</span>`:null]}/>`)}
+        </div>` : null}
+
+      ${myDay.length ? html`
+        <div>
+          <div className="grouphdr"><${Icon.sun}/> Min dag</div>
+          ${myDay.map(t=>html`
+            <${TaskRow} key=${t.id} task=${t} category=${cats[t.categoryId]} showCategory=${true}
+              onOpen=${onOpenItem} onToggleDone=${api.toggleDone}/>`)}
+        </div>` : null}
+
+      ${deadlines.length ? html`
+        <div>
+          <div className="grouphdr"><${Icon.calendar}/> Deadlines</div>
+          ${deadlines.map(t=>html`
+            <${TaskRow} key=${t.id} task=${t} category=${cats[t.categoryId]} showCategory=${true}
+              onOpen=${onOpenItem} onToggleDone=${api.toggleDone}/>`)}
+        </div>` : null}
+    </div>`;
+}
+
+function CategoriesScreen({data, onOpenCategory, onOpenSettings}){
   const cats = [...data.categories].sort((a,b)=>a.order-b.order);
+  const counts = {};
+  for(const i of data.items){
+    if(i.type==='task' && !i.idea && i.status!=='done') counts[i.categoryId]=(counts[i.categoryId]||0)+1;
+  }
   return html`
     <div className="screen">
       <div className="hdr">
@@ -400,7 +666,7 @@ function CategoriesScreen({data, openCounts, onOpenCategory, onOpenSettings}){
         <button className="iconbtn" aria-label="Indstillinger" onClick=${onOpenSettings}><${Icon.gear}/></button>
       </div>
       ${cats.map(c=>{
-        const n = openCounts[c.id]||0;
+        const n = counts[c.id]||0;
         return html`
           <button key=${c.id} className="catrow" onClick=${()=>onOpenCategory(c.id)}>
             <${CatDot} color=${c.color}/>
@@ -412,23 +678,76 @@ function CategoriesScreen({data, openCounts, onOpenCategory, onOpenSettings}){
     </div>`;
 }
 
-const TAB_LABELS = {open:'Ikke færdig', idea:'Idé', done:'Færdig'};
+const CAT_SECTIONS = [
+  ['tasks','Opgaver'], ['ideas','Idéer'], ['decisions','Beslutninger'],
+  ['agreements','Aftaler'], ['notes','Noter'], ['standards','Standarder'], ['done','Afsluttet']
+];
 
-function CategoryScreen({data, categoryId, tab, onTab, onBack, actions}){
+function CategoryScreen({data, categoryId, section, onSection, onBack, onOpenItem, api}){
   const cat = data.categories.find(c=>c.id===categoryId);
   if(!cat) return null;
-  const all = data.tasks.filter(t=>t.categoryId===categoryId);
-  const byTab = {
-    open: all.filter(t=>t.status==='open').sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||'')),
-    idea: all.filter(t=>t.status==='idea').sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||'')),
-    done: all.filter(t=>t.status==='done').sort((a,b)=>(b.completedAt||'').localeCompare(a.completedAt||''))
+  const all = data.items.filter(i=>i.categoryId===categoryId);
+  const buckets = {
+    tasks: all.filter(i=>i.type==='task' && !i.idea && i.status!=='done'),
+    ideas: all.filter(i=>i.type==='task' && i.idea),
+    decisions: all.filter(i=>i.type==='decision').sort(byDesc('decidedOn')),
+    agreements: all.filter(i=>i.type==='agreement').sort(byDesc('agreedOn')),
+    notes: all.filter(i=>i.type==='note').sort(byDesc('noteDate')),
+    standards: all.filter(i=>i.type==='standard').sort(byDesc('updatedAt')),
+    done: all.filter(i=>i.type==='task' && i.status==='done').sort(byDesc('completedAt'))
   };
-  const tasks = byTab[tab];
-  const emptyText = {
-    open:'Ingenting udestår her.',
-    idea:'Skriv en tanke ned, inden den forsvinder.',
-    done:'Ingen opgaver er færdige endnu.'
-  }[tab];
+
+  const prioRank = {high:0, normal:1, low:2};
+  const sortTasks = (arr)=>[...arr].sort((a,b)=>
+    (prioRank[a.priority]-prioRank[b.priority])
+    || String(a.deadline||'9999').localeCompare(String(b.deadline||'9999'))
+    || String(b.createdAt||'').localeCompare(String(a.createdAt||'')));
+
+  let content = null;
+  if(section==='tasks'){
+    const groups = [
+      ['in_progress','I gang'], ['waiting','Afventer'], ['not_started','Ikke startet']
+    ].map(([k,label])=>[label, sortTasks(buckets.tasks.filter(t=>t.status===k))]).filter(([,arr])=>arr.length);
+    content = groups.length===0
+      ? html`<${Empty} text="Ingenting udestår her."/>`
+      : groups.map(([label,arr])=>html`
+          <div key=${label}>
+            <div className="grouphdr">${label} <span className="n">· ${arr.length}</span></div>
+            ${arr.map(t=>html`<${TaskRow} key=${t.id} task=${t} category=${cat} onOpen=${onOpenItem} onToggleDone=${api.toggleDone}/>`)}
+          </div>`);
+  }else if(section==='ideas'){
+    const arr = [...buckets.ideas].sort(byDesc('createdAt'));
+    content = arr.length===0
+      ? html`<${Empty} text="Skriv en tanke ned, inden den forsvinder."/>`
+      : arr.map(t=>html`<${TaskRow} key=${t.id} task=${t} category=${cat} onOpen=${onOpenItem}
+          onToggleDone=${api.toggleDone} onConvert=${api.startConvertIdea}/>`);
+  }else if(section==='decisions'){
+    content = buckets.decisions.length===0
+      ? html`<${Empty} text="Ingen beslutninger endnu."/>`
+      : buckets.decisions.map(i=>html`<${PlainRow} key=${i.id} item=${i} category=${cat} onOpen=${onOpenItem}
+          snippet=${i.what||null} meta=${[html`<span key="d">${fmtDay(i.decidedOn)}</span>`]}/>`);
+  }else if(section==='agreements'){
+    content = buckets.agreements.length===0
+      ? html`<${Empty} text="Ingen aftaler endnu."/>`
+      : buckets.agreements.map(i=>html`<${PlainRow} key=${i.id} item=${i} category=${cat} onOpen=${onOpenItem}
+          snippet=${i.what||null}
+          meta=${[html`<span key="d">${fmtDay(i.agreedOn)}</span>`, i.withWhom?html`<span key="w">Med ${i.withWhom}</span>`:null]}/>`);
+  }else if(section==='notes'){
+    content = buckets.notes.length===0
+      ? html`<${Empty} text="Ingen noter endnu."/>`
+      : buckets.notes.map(i=>html`<${PlainRow} key=${i.id} item=${i} category=${cat} onOpen=${onOpenItem}
+          snippet=${i.text||null} meta=${[html`<span key="d">${fmtDay(i.noteDate)}</span>`]}/>`);
+  }else if(section==='standards'){
+    content = buckets.standards.length===0
+      ? html`<${Empty} text="Ingen standarder endnu."/>`
+      : buckets.standards.map(i=>html`<${PlainRow} key=${i.id} item=${i} category=${cat} onOpen=${onOpenItem}
+          badge=${html`<span className=${'badge'+(i.status==='active'?' active':i.status==='retired'?' retired':'')}>${STD_STATUS[i.status]}</span>`}
+          meta=${[html`<span key="d">Senest ændret ${fmtDate(i.updatedAt)}</span>`]}/>`);
+  }else if(section==='done'){
+    content = buckets.done.length===0
+      ? html`<${Empty} text="Ingen opgaver er færdige endnu."/>`
+      : buckets.done.map(t=>html`<${TaskRow} key=${t.id} task=${t} category=${cat} onOpen=${onOpenItem} onToggleDone=${api.toggleDone}/>`);
+  }
 
   return html`
     <div className="screen has-fab">
@@ -436,61 +755,28 @@ function CategoryScreen({data, categoryId, tab, onTab, onBack, actions}){
         <button className="iconbtn backbtn" aria-label="Tilbage" onClick=${onBack}><${Icon.back}/></button>
         <h1><${CatDot} color=${cat.color} size="10px"/> ${' '}${cat.name}</h1>
       </div>
-      <div className="tabs" role="tablist">
-        ${['open','idea','done'].map(k=>html`
-          <button key=${k} role="tab" aria-selected=${tab===k}
-                  className=${'tab'+(tab===k?' active':'')}
-                  onClick=${()=>onTab(k)}>
-            ${TAB_LABELS[k]} <span className="n">· ${byTab[k].length}</span>
+      <div className="chiprow">
+        ${CAT_SECTIONS.map(([k,label])=>html`
+          <button key=${k} className=${'chip'+(section===k?' active':'')} onClick=${()=>onSection(k)}>
+            ${label}${buckets[k].length?html` <span className="n">${buckets[k].length}</span>`:null}
           </button>`)}
       </div>
-      ${tasks.length===0
-        ? html`<div className="empty">${emptyText}</div>`
-        : tasks.map(t=>html`
-            <${TaskCard} key=${t.id} task=${t} category=${cat} mode=${tab}
-              onToggleDone=${actions.toggleDone}
-              onConvert=${actions.startConvert}
-              onMenu=${actions.openMenu}/>`)}
+      ${content}
       <div className="fabwrap">
-        <button className="btn btn-primary" onClick=${()=>actions.startCreate(categoryId, tab==='idea'?'idea':'open')}>
-          <${Icon.plus}/> Ny opgave
+        <button className="btn btn-primary" onClick=${()=>api.startAdd(categoryId, section)}>
+          <${Icon.plus}/> Tilføj
         </button>
       </div>
     </div>`;
 }
 
-function OverviewScreen({data, onOpenTask, actions}){
-  const cats = [...data.categories].sort((a,b)=>a.order-b.order);
-  const open = data.tasks.filter(t=>t.status==='open');
-  const ideas = data.tasks.filter(t=>t.status==='idea');
-  const hasAnything = open.length>0 || ideas.length>0;
-  return html`
-    <div className="screen">
-      <div className="hdr"><h1>Overblik</h1></div>
-      <p className="summaryline">${open.length} ${open.length===1?'udestående':'udestående'} · ${ideas.length} ${ideas.length===1?'idé':'idéer'}</p>
-      ${!hasAnything ? html`<div className="empty">Ingenting i gang lige nu.</div>` : cats.map(c=>{
-        const co = open.filter(t=>t.categoryId===c.id).sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''));
-        const ci = ideas.filter(t=>t.categoryId===c.id).sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''));
-        if(co.length===0 && ci.length===0) return null;
-        return html`
-          <div key=${c.id}>
-            <div className="grouphdr"><${CatDot} color=${c.color} size="8px"/> ${c.name}</div>
-            ${[...co,...ci].map(t=>html`
-              <${TaskCard} key=${t.id} task=${t} category=${c} mode="overview"
-                onToggleDone=${actions.toggleDone}
-                onOpen=${onOpenTask}/>`)}
-          </div>`;
-      })}
-    </div>`;
-}
-
-function DecisionsScreen({data, filter, onFilter, onOpenTask}){
+function DecisionsScreen({data, filter, onFilter, onOpenItem}){
   const cats = [...data.categories].sort((a,b)=>a.order-b.order);
   const catById = Object.fromEntries(cats.map(c=>[c.id,c]));
-  const decided = data.tasks
-    .filter(t=>t.decidedAt || t.decisionNote)
-    .filter(t=>!filter || t.categoryId===filter)
-    .sort((a,b)=>(b.decidedAt||b.createdAt||'').localeCompare(a.decidedAt||a.createdAt||''));
+  const decided = data.items
+    .filter(i=>i.type==='decision')
+    .filter(i=>!filter || i.categoryId===filter)
+    .sort(byDesc('decidedOn'));
   return html`
     <div className="screen">
       <div className="hdr"><h1>Beslutninger</h1></div>
@@ -502,36 +788,237 @@ function DecisionsScreen({data, filter, onFilter, onOpenTask}){
           </button>`)}
       </div>
       ${decided.length===0
-        ? html`<div className="empty">Ingen beslutninger endnu.</div>`
-        : decided.map(t=>{
-            const c = catById[t.categoryId];
-            return html`
-              <button key=${t.id} className="dec-card" onClick=${()=>onOpenTask(t)}>
-                <span className="stripe" style=${{background:c?c.color:'transparent'}}></span>
-                <div className="dec-top">
-                  <span>${fmtDate(t.decidedAt || t.createdAt)}</span>
-                  <span>·</span>
-                  ${c ? html`<${CatDot} color=${c.color} size="8px"/><span>${c.name}</span>` : null}
-                </div>
-                <div className="dec-title">${t.title}</div>
-                ${t.decisionNote ? html`<div className="dec-note">${t.decisionNote}</div>` : null}
-              </button>`;
+        ? html`<${Empty} text="Ingen beslutninger endnu."/>`
+        : decided.map(i=>{
+            const c = catById[i.categoryId];
+            return html`<${PlainRow} key=${i.id} item=${i} category=${c} onOpen=${onOpenItem}
+              snippet=${i.what||null}
+              meta=${[html`<span key="d">${fmtDay(i.decidedOn)}</span>`, c?html`<span key="c">${c.name}</span>`:null]}/>`;
           })}
     </div>`;
 }
 
-function SettingsScreen({data, onBack, actions}){
+function StandardsScreen({data, filter, onFilter, statusFilter, onStatusFilter, onOpenItem}){
+  const cats = [...data.categories].sort((a,b)=>a.order-b.order);
+  const catById = Object.fromEntries(cats.map(c=>[c.id,c]));
+  const stdOrder = {active:0, draft:1, retired:2};
+  const list = data.items
+    .filter(i=>i.type==='standard')
+    .filter(i=>!filter || i.categoryId===filter)
+    .filter(i=>statusFilter==='all' || i.status===statusFilter)
+    .sort((a,b)=>(stdOrder[a.status]-stdOrder[b.status]) || String(b.updatedAt||'').localeCompare(String(a.updatedAt||'')));
+  return html`
+    <div className="screen">
+      <div className="hdr"><h1>Standarder</h1></div>
+      <div className="chiprow">
+        ${[['all','Alle'],['active','Gældende'],['draft','Kladder'],['retired','Udgåede']].map(([k,label])=>html`
+          <button key=${k} className=${'chip'+(statusFilter===k?' active':'')} onClick=${()=>onStatusFilter(k)}>${label}</button>`)}
+      </div>
+      <div className="chiprow" style=${{paddingTop:0}}>
+        <button className=${'chip'+(!filter?' active':'')} onClick=${()=>onFilter(null)}>Alle kategorier</button>
+        ${cats.map(c=>html`
+          <button key=${c.id} className=${'chip'+(filter===c.id?' active':'')} onClick=${()=>onFilter(c.id)}>
+            <${CatDot} color=${c.color} size="8px"/> ${c.name}
+          </button>`)}
+      </div>
+      ${list.length===0
+        ? html`<${Empty} text="Ingen standarder her endnu. Opret dem inde i en kategori."/>`
+        : list.map(i=>{
+            const c = catById[i.categoryId];
+            return html`<${PlainRow} key=${i.id} item=${i} category=${c} onOpen=${onOpenItem}
+              badge=${html`<span className=${'badge'+(i.status==='active'?' active':i.status==='retired'?' retired':'')}>${STD_STATUS[i.status]}</span>`}
+              meta=${[c?html`<span key="c">${c.name}</span>`:null, html`<span key="d">Senest ændret ${fmtDate(i.updatedAt)}</span>`]}/>`;
+          })}
+    </div>`;
+}
+
+/* ---------- Detaljevisning ---------- */
+
+function ItemScreen({data, itemId, onBack, onOpenItem, api}){
+  const item = data.items.find(i=>i.id===itemId);
+  if(!item) return html`<div className="screen"><div className="hdr">
+    <button className="iconbtn backbtn" aria-label="Tilbage" onClick=${onBack}><${Icon.back}/></button>
+    <h1>Ikke fundet</h1></div></div>`;
+  const cat = data.categories.find(c=>c.id===item.categoryId);
+  const origin = data.relations.filter(r=>r.toId===item.id)
+    .map(r=>data.items.find(i=>i.id===r.fromId)).filter(Boolean)[0] || null;
+  const children = data.relations.filter(r=>r.fromId===item.id)
+    .map(r=>data.items.find(i=>i.id===r.toId)).filter(Boolean);
+
+  const head = html`
+    <div className="detail-card">
+      <span className="stripe" style=${{background:cat?cat.color:'transparent'}}></span>
+      <div className="typetag">${item.type==='task' && item.idea ? 'Idé' : TYPE_LABEL[item.type]}
+        ${item.type==='standard' ? html` <span className=${'badge'+(item.status==='active'?' active':item.status==='retired'?' retired':'')}>${STD_STATUS[item.status]}</span>` : null}
+      </div>
+      <div className="detail-title">${item.title}</div>
+      ${cat ? html`<div className="detail-cat"><${CatDot} color=${cat.color} size="8px"/> ${cat.name}</div>` : null}
+    </div>`;
+
+  const originCard = origin ? html`
+    <div>
+      <div className="grouphdr">Baggrund</div>
+      <button className="linkrow" onClick=${()=>onOpenItem(origin)}>
+        <span className="badge">${TYPE_LABEL[origin.type]}</span>
+        <span className="lr-main">
+          <span className="lr-title">${origin.title}</span>
+          <span className="lr-sub">${origin.type==='decision' ? 'Besluttet '+fmtDay(origin.decidedOn) : origin.type==='agreement' ? 'Aftalt '+fmtDay(origin.agreedOn) : ''}</span>
+        </span>
+        <span className="chev"><${Icon.chevron}/></span>
+      </button>
+    </div>` : null;
+
+  const childrenCards = children.length ? html`
+    <div>
+      <div className="grouphdr">Relaterede opgaver</div>
+      ${children.map(ch=>html`
+        <button key=${ch.id} className="linkrow" onClick=${()=>onOpenItem(ch)}>
+          <span className="badge">${ch.status==='done'?'Færdig':(TASK_STATUS[ch.status]||'Opgave')}</span>
+          <span className="lr-main"><span className="lr-title">${ch.title}</span></span>
+          <span className="chev"><${Icon.chevron}/></span>
+        </button>`)}
+    </div>` : null;
+
+  const fuDue = item.followUp && item.followUp.due;
+  const followUpRow = html`
+    <div>
+      <div className="grouphdr">Opfølgning</div>
+      ${fuDue ? html`
+        <div className="detail-card">
+          <div className="fv" style=${daysUntil(item.followUp.due)<=0?{color:'var(--danger)',fontWeight:500}:{fontWeight:500}}>
+            Følg op ${fmtDay(item.followUp.due)}
+          </div>
+          ${item.followUp.note ? html`<div className="fv mut" style=${{marginTop:'4px',fontSize:'14px',color:'var(--muted)'}}>${item.followUp.note}</div>` : null}
+          <div className="sheet-actions" style=${{marginTop:'12px'}}>
+            <button className="btn btn-secondary" onClick=${()=>api.clearFollowUp(item.id)}><${Icon.check}/> Fulgt op — fjern</button>
+            <button className="btn btn-ghost" onClick=${()=>api.startFollowUp(item)}>Ret dato eller note</button>
+          </div>
+        </div>`
+      : html`<button className="btn btn-secondary" onClick=${()=>api.startFollowUp(item)}><${Icon.bell}/> Sæt opfølgning</button>`}
+    </div>`;
+
+  let body = null;
+
+  if(item.type==='task'){
+    body = html`
+      <div>
+      ${item.idea ? html`
+        <button className="btn btn-primary" style=${{marginBottom:'10px'}} onClick=${()=>api.startConvertIdea(item)}>
+          <${Icon.arrow}/> Gør til opgave
+        </button>` : html`
+        <div>
+          <div className="grouphdr">Status</div>
+          <${Seg} options=${Object.entries(TASK_STATUS)} value=${item.status} onChange=${(s)=>api.setTaskStatus(item, s)}/>
+          <div style=${{height:'12px'}}></div>
+          <div className="detail-card">
+            <${SwitchRow} label="På min liste i dag" on=${item.myDay} onToggle=${()=>api.toggleMyDay(item)}/>
+          </div>
+        </div>`}
+      <div className="detail-card">
+        <${Field} label="Beskrivelse" value=${item.description}/>
+        <${Field} label="Deadline" value=${item.deadline ? fmtDay(item.deadline) : ''}/>
+        <${Field} label="Prioritet" value=${item.priority!=='normal' ? PRIORITY[item.priority] : ''}/>
+        ${item.status==='waiting' ? html`<${Field} label="Afventer" value=${item.waitingFor||'—'}/>` : null}
+        <${Field} label="Oprettet" value=${fmtDate(item.createdAt)} muted=${true}/>
+        ${item.completedAt ? html`<${Field} label="Færdig" value=${fmtDate(item.completedAt)}/>` : null}
+      </div>
+      ${!item.idea ? followUpRow : null}
+      ${originCard}
+      </div>`;
+  }else if(item.type==='decision'){
+    body = html`
+      <div>
+      <div className="detail-card">
+        <${Field} label="Dato for beslutningen" value=${fmtDay(item.decidedOn)}/>
+        <${Field} label="Hvad blev besluttet?" value=${item.what}/>
+        <${Field} label="Begrundelse/baggrund" value=${item.rationale}/>
+        <${Field} label="Hvem var involveret?" value=${item.involved}/>
+        <${Field} label="Noter" value=${item.notes}/>
+      </div>
+      <button className="btn btn-primary" onClick=${()=>api.startTaskFrom(item)}><${Icon.plus}/> Opret opgave ud fra beslutningen</button>
+      <div style=${{height:'4px'}}></div>
+      ${followUpRow}
+      ${childrenCards}
+      </div>`;
+  }else if(item.type==='agreement'){
+    body = html`
+      <div>
+      <div className="detail-card">
+        <${Field} label="Dato" value=${fmtDay(item.agreedOn)}/>
+        <${Field} label="Hvad er aftalt?" value=${item.what}/>
+        <${Field} label="Aftale med" value=${item.withWhom}/>
+        <${Field} label="Deadline for aftalen" value=${item.deadline ? fmtDay(item.deadline) : ''}/>
+      </div>
+      <button className="btn btn-primary" onClick=${()=>api.startTaskFrom(item)}><${Icon.plus}/> Opret opgave ud fra aftalen</button>
+      <div style=${{height:'4px'}}></div>
+      ${followUpRow}
+      ${childrenCards}
+      </div>`;
+  }else if(item.type==='note'){
+    body = html`
+      <div className="detail-card">
+        <${Field} label="Dato" value=${fmtDay(item.noteDate)}/>
+        <${Field} label="Note" value=${item.text}/>
+      </div>`;
+  }else if(item.type==='standard'){
+    const vCount = (item.versions||[]).length;
+    body = html`
+      <div>
+      <div className="grouphdr">Status</div>
+      <${Seg} cols3=${true} options=${Object.entries(STD_STATUS)} value=${item.status} onChange=${(s)=>api.setStandardStatus(item, s)}/>
+      <div style=${{height:'12px'}}></div>
+      <div className="detail-card">
+        ${STD_FIELDS.map(([k,label])=>html`<${Field} key=${k} label=${label} value=${(item.fields||{})[k]}/>`)}
+        <${Field} label="Oprettet" value=${fmtDate(item.createdAt)} muted=${true}/>
+        <${Field} label="Senest ændret" value=${fmtDate(item.updatedAt)} muted=${true}/>
+      </div>
+      <div className="grouphdr">Versionshistorik</div>
+      <div className="detail-card">
+        <div className="verrow">
+          <span className="v-name">Version ${vCount+1}</span>
+          <span className="v-date">${fmtDate(item.updatedAt)}</span>
+          <span className="v-cur">Nuværende</span>
+        </div>
+        ${[...(item.versions||[])].reverse().map(v=>html`
+          <button key=${v.version} className="verrow" onClick=${()=>api.showVersion(item, v)}>
+            <span className="v-name">Version ${v.version}</span>
+            <span className="v-date">${fmtDate(v.savedAt)}</span>
+            <span className="chev" style=${{marginLeft:'auto'}}><${Icon.chevron}/></span>
+          </button>`)}
+      </div>
+      </div>`;
+  }
+
+  return html`
+    <div className="screen">
+      <div className="hdr">
+        <button className="iconbtn backbtn" aria-label="Tilbage" onClick=${onBack}><${Icon.back}/></button>
+        <h1 style=${{fontSize:'17px'}}>${TYPE_LABEL[item.type]}</h1>
+        <button className="iconbtn" aria-label="Rediger" onClick=${()=>api.startEdit(item)}><${Icon.pen}/></button>
+      </div>
+      ${head}
+      ${body}
+      <div style=${{height:'16px'}}></div>
+      ${item.type!=='standard' ? html`
+        <button className="btn btn-dangerghost" onClick=${()=>api.confirmDelete(item)}><${Icon.trash}/> Slet</button>
+      ` : html`<p className="settings-note">En standard kan ikke slettes — markér den som udgået i stedet, så historikken bevares.</p>`}
+    </div>`;
+}
+
+/* ---------- Indstillinger ---------- */
+
+function SettingsScreen({data, onBack, api}){
   const cats = [...data.categories].sort((a,b)=>a.order-b.order);
   const [colorFor,setColorFor] = useState(null);
-  const fileRef = useRef(null);
-  const taskCount = (id)=>data.tasks.filter(t=>t.categoryId===id).length;
+  const usage = {};
+  for(const i of data.items) usage[i.categoryId]=(usage[i.categoryId]||0)+1;
 
   const onPickFile = (e)=>{
     const f = e.target.files && e.target.files[0];
     e.target.value = '';
     if(!f) return;
     const reader = new FileReader();
-    reader.onload = ()=>actions.startImport(String(reader.result));
+    reader.onload = ()=>api.startImport(String(reader.result));
     reader.readAsText(f);
   };
 
@@ -544,7 +1031,7 @@ function SettingsScreen({data, onBack, actions}){
 
       <div className="settings-section">
         <h2>Kategorier</h2>
-        ${cats.map(c=>html`
+        ${cats.map((c,idx)=>html`
           <div key=${c.id} className="setcat">
             <div className="setcat-row">
               <button className="swatchbtn" aria-label=${'Vælg farve til '+c.name}
@@ -552,9 +1039,11 @@ function SettingsScreen({data, onBack, actions}){
                 <span className="swatch" style=${{background:c.color}}></span>
               </button>
               <input defaultValue=${c.name} aria-label="Kategoriens navn"
-                     onBlur=${(e)=>actions.renameCategory(c.id, e.target.value)}/>
-              ${taskCount(c.id)===0 ? html`
-                <button className="del" onClick=${()=>actions.confirmDeleteCategory(c)}>Slet</button>
+                     onBlur=${(e)=>api.renameCategory(c.id, e.target.value)}/>
+              <button className="ordbtn" aria-label="Flyt op" disabled=${idx===0} onClick=${()=>api.moveCategory(c.id,-1)}><${Icon.up}/></button>
+              <button className="ordbtn" aria-label="Flyt ned" disabled=${idx===cats.length-1} onClick=${()=>api.moveCategory(c.id,1)}><${Icon.down}/></button>
+              ${!usage[c.id] ? html`
+                <button className="del" onClick=${()=>api.confirmDeleteCategory(c)}>Slet</button>
               ` : null}
             </div>
             ${colorFor===c.id ? html`
@@ -562,91 +1051,252 @@ function SettingsScreen({data, onBack, actions}){
                 ${PALETTE.map(p=>html`
                   <button key=${p} style=${{background:p}} className=${c.color===p?'sel':''}
                           aria-label=${'Farve '+p}
-                          onClick=${()=>{actions.recolorCategory(c.id,p); setColorFor(null);}}></button>`)}
+                          onClick=${()=>{api.recolorCategory(c.id,p); setColorFor(null);}}></button>`)}
               </div>
             ` : null}
           </div>`)}
-        <button className="btn btn-secondary" onClick=${actions.addCategory}><${Icon.plus}/> Tilføj kategori</button>
+        <button className="btn btn-secondary" onClick=${api.addCategory}><${Icon.plus}/> Tilføj kategori</button>
         <p className="settings-note">En kategori kan kun slettes, når den er tom.</p>
       </div>
 
       <div className="settings-section">
         <h2>Backup</h2>
         <div className="sheet-actions" style=${{marginTop:0}}>
-          <button className="btn btn-secondary" onClick=${actions.exportData}>Eksportér data</button>
+          <button className="btn btn-secondary" onClick=${api.exportData}>Eksportér data</button>
           <label className="btn btn-secondary filelabel">
             Importér data
-            <input ref=${fileRef} type="file" accept="application/json,.json" onChange=${onPickFile}/>
+            <input type="file" accept="application/json,.json" onChange=${onPickFile}/>
           </label>
         </div>
-        <p className="settings-note">Eksport gemmer alt som en JSON-fil. Import erstatter alle nuværende data med filens indhold.</p>
+        <p className="settings-note">Eksport gemmer alt som en JSON-fil. Import erstatter alle nuværende data med filens indhold — både nye og gamle backupfiler kan importeres.</p>
       </div>
 
-      <p className="settings-note">Version 1 · Al data ligger kun på denne telefon.</p>
+      <p className="settings-note">Version 2 · Al data ligger kun på denne telefon.</p>
     </div>`;
 }
 
-/* ================= Ark (sheets) ================= */
+/* ================= Formularer (ark) ================= */
 
-function TaskSheet({initial, onSave, onClose}){
-  const [title,setTitle] = useState(initial.title||'');
-  const [note,setNote] = useState(initial.note||'');
-  const isNew = !initial.id;
+function FormSheet({title, onClose, onSave, canSave, saveLabel, children, contextLine}){
   return html`
-    <${Sheet} onClose=${onClose} label=${isNew?'Ny opgave':'Rediger opgave'}>
-      <h2>${isNew?'Ny opgave':'Rediger opgave'}</h2>
-      <div className="field">
-        <label htmlFor="f-title">Titel</label>
-        <input id="f-title" className="input" value=${title} autoFocus
-               onInput=${(e)=>setTitle(e.target.value)}
-               onKeyDown=${(e)=>{if(e.key==='Enter' && title.trim()){e.preventDefault(); onSave(title.trim(), note.trim());}}}/>
-      </div>
-      <div className="field">
-        <label htmlFor="f-note">Note</label>
-        <textarea id="f-note" className="input" value=${note} rows="3"
-                  onInput=${(e)=>setNote(e.target.value)}></textarea>
-      </div>
+    <${Sheet} onClose=${onClose} label=${title}>
+      <h2>${title}</h2>
+      ${contextLine ? html`<p className="taskref">${contextLine}</p>` : null}
+      ${children}
       <div className="sheet-actions">
-        <button className="btn btn-primary" disabled=${!title.trim()}
-                onClick=${()=>onSave(title.trim(), note.trim())}>Gem</button>
+        <button className="btn btn-primary" disabled=${!canSave} onClick=${onSave}>${saveLabel||'Gem'}</button>
         <button className="btn btn-ghost" onClick=${onClose}>Annuller</button>
       </div>
     <//>`;
 }
 
-function DecisionSheet({task, allowSkip, onSave, onSkip, onClose}){
-  const [note,setNote] = useState(task.decisionNote||'');
+function TextField({label, value, onInput, optional, autoFocus, placeholder}){
+  return html`
+    <div className="field">
+      <label>${label}${optional?html` <span className="opt">· valgfri</span>`:null}</label>
+      <input className="input" value=${value} autoFocus=${autoFocus} placeholder=${placeholder||''}
+             onInput=${(e)=>onInput(e.target.value)}/>
+    </div>`;
+}
+function AreaField({label, value, onInput, optional, rows, autoFocus}){
+  return html`
+    <div className="field">
+      <label>${label}${optional?html` <span className="opt">· valgfri</span>`:null}</label>
+      <textarea className="input" value=${value} rows=${rows||3} autoFocus=${autoFocus}
+                onInput=${(e)=>onInput(e.target.value)}></textarea>
+    </div>`;
+}
+function DateField({label, value, onInput, optional}){
+  return html`
+    <div className="field">
+      <label>${label}${optional?html` <span className="opt">· valgfri</span>`:null}</label>
+      <input type="date" className="input" value=${value||''} onInput=${(e)=>onInput(e.target.value)}/>
+    </div>`;
+}
+
+function TaskForm({initial, title, contextLine, onSave, onClose}){
+  const [f,setF] = useState({
+    title: initial.title||'', description: initial.description||'',
+    deadline: initial.deadline||'', priority: initial.priority||'normal',
+    myDay: !!initial.myDay
+  });
+  const set = (k)=>(v)=>setF(s=>({...s,[k]:v}));
+  return html`
+    <${FormSheet} title=${title} contextLine=${contextLine} onClose=${onClose}
+      canSave=${!!f.title.trim()} onSave=${()=>onSave({
+        title:f.title.trim(), description:f.description.trim(),
+        deadline:f.deadline||null, priority:f.priority, myDay:f.myDay,
+        myDayAt: f.myDay ? (initial.myDay ? initial.myDayAt : nowIso()) : null
+      })}>
+      <${TextField} label="Titel" value=${f.title} onInput=${set('title')} autoFocus=${!initial.id}/>
+      <${AreaField} label="Beskrivelse/noter" value=${f.description} onInput=${set('description')} optional=${true}/>
+      <${DateField} label="Deadline" value=${f.deadline} onInput=${set('deadline')} optional=${true}/>
+      <div className="field">
+        <label>Prioritet</label>
+        <${Seg} cols3=${true} options=${[['high','Høj'],['normal','Normal'],['low','Lav']]} value=${f.priority} onChange=${set('priority')}/>
+      </div>
+      <div className="field">
+        <${SwitchRow} label="På min liste i dag" on=${f.myDay} onToggle=${()=>setF(s=>({...s,myDay:!s.myDay}))}/>
+      </div>
+    <//>`;
+}
+
+function IdeaForm({initial, onSave, onClose}){
+  const [t,setT] = useState(initial.title||'');
+  const [d,setD] = useState(initial.description||'');
+  return html`
+    <${FormSheet} title=${initial.id?'Rediger idé':'Ny idé'} onClose=${onClose}
+      canSave=${!!t.trim()} onSave=${()=>onSave({title:t.trim(), description:d.trim()})}>
+      <${TextField} label="Hvad tænker du på?" value=${t} onInput=${setT} autoFocus=${true}/>
+      <${AreaField} label="Note" value=${d} onInput=${setD} optional=${true} rows="2"/>
+    <//>`;
+}
+
+function DecisionForm({initial, onSave, onClose}){
+  const [f,setF] = useState({
+    title: initial.title||'', decidedOn: initial.decidedOn||todayStr(),
+    what: initial.what||'', rationale: initial.rationale||'',
+    involved: initial.involved||'', notes: initial.notes||'',
+    followUpDue: (initial.followUp&&initial.followUp.due)||''
+  });
+  const set=(k)=>(v)=>setF(s=>({...s,[k]:v}));
+  return html`
+    <${FormSheet} title=${initial.id?'Rediger beslutning':'Ny beslutning'} onClose=${onClose}
+      canSave=${!!f.title.trim()} onSave=${()=>onSave({
+        title:f.title.trim(), decidedOn:f.decidedOn||todayStr(), what:f.what.trim(),
+        rationale:f.rationale.trim(), involved:f.involved.trim(), notes:f.notes.trim(),
+        followUp: f.followUpDue ? {due:f.followUpDue, note:(initial.followUp&&initial.followUp.note)||''} : (initial.followUp||null)
+      })}>
+      <${TextField} label="Titel" value=${f.title} onInput=${set('title')} autoFocus=${!initial.id}/>
+      <${DateField} label="Dato for beslutningen" value=${f.decidedOn} onInput=${set('decidedOn')}/>
+      <${AreaField} label="Hvad blev besluttet?" value=${f.what} onInput=${set('what')}/>
+      <${AreaField} label="Begrundelse/baggrund" value=${f.rationale} onInput=${set('rationale')} optional=${true} rows="2"/>
+      <${TextField} label="Hvem var involveret?" value=${f.involved} onInput=${set('involved')} optional=${true}/>
+      <${DateField} label="Følg op" value=${f.followUpDue} onInput=${set('followUpDue')} optional=${true}/>
+      <${AreaField} label="Noter" value=${f.notes} onInput=${set('notes')} optional=${true} rows="2"/>
+    <//>`;
+}
+
+function AgreementForm({initial, onSave, onClose}){
+  const [f,setF] = useState({
+    title: initial.title||'', agreedOn: initial.agreedOn||todayStr(),
+    what: initial.what||'', withWhom: initial.withWhom||'', deadline: initial.deadline||'',
+    followUpDue: (initial.followUp&&initial.followUp.due)||''
+  });
+  const set=(k)=>(v)=>setF(s=>({...s,[k]:v}));
+  return html`
+    <${FormSheet} title=${initial.id?'Rediger aftale':'Ny aftale'} onClose=${onClose}
+      canSave=${!!f.title.trim()} onSave=${()=>onSave({
+        title:f.title.trim(), agreedOn:f.agreedOn||todayStr(), what:f.what.trim(),
+        withWhom:f.withWhom.trim(), deadline:f.deadline||null,
+        followUp: f.followUpDue ? {due:f.followUpDue, note:(initial.followUp&&initial.followUp.note)||''} : (initial.followUp||null)
+      })}>
+      <${TextField} label="Titel" value=${f.title} onInput=${set('title')} autoFocus=${!initial.id}/>
+      <${DateField} label="Dato" value=${f.agreedOn} onInput=${set('agreedOn')}/>
+      <${AreaField} label="Hvad er aftalt?" value=${f.what} onInput=${set('what')}/>
+      <${TextField} label="Aftale med" value=${f.withWhom} onInput=${set('withWhom')} optional=${true}/>
+      <${DateField} label="Deadline for aftalen" value=${f.deadline} onInput=${set('deadline')} optional=${true}/>
+      <${DateField} label="Følg op" value=${f.followUpDue} onInput=${set('followUpDue')} optional=${true}/>
+    <//>`;
+}
+
+function NoteForm({initial, onSave, onClose}){
+  const [f,setF] = useState({title: initial.title||'', noteDate: initial.noteDate||todayStr(), text: initial.text||''});
+  const set=(k)=>(v)=>setF(s=>({...s,[k]:v}));
+  return html`
+    <${FormSheet} title=${initial.id?'Rediger note':'Ny note'} onClose=${onClose}
+      canSave=${!!f.title.trim()} onSave=${()=>onSave({title:f.title.trim(), noteDate:f.noteDate||todayStr(), text:f.text.trim()})}>
+      <${TextField} label="Titel" value=${f.title} onInput=${set('title')} autoFocus=${!initial.id}/>
+      <${AreaField} label="Note" value=${f.text} onInput=${set('text')} rows="4"/>
+      <${DateField} label="Dato" value=${f.noteDate} onInput=${set('noteDate')}/>
+    <//>`;
+}
+
+function StandardForm({initial, onSave, onClose}){
+  const [title,setTitle] = useState(initial.title||'');
+  const [fields,setFields] = useState({...(initial.fields||{})});
+  const setF=(k)=>(v)=>setFields(s=>({...s,[k]:v}));
+  return html`
+    <${FormSheet} title=${initial.id?'Rediger standard':'Ny standard'} onClose=${onClose}
+      canSave=${!!title.trim()} onSave=${()=>onSave({title:title.trim(), fields})}
+      contextLine=${initial.id?null:'Kun titlen er påkrævet — resten kan udfyldes løbende. Nye standarder starter som kladde.'}>
+      <${TextField} label="Titel" value=${title} onInput=${setTitle} autoFocus=${!initial.id}/>
+      ${STD_FIELDS.map(([k,label])=>html`
+        <${AreaField} key=${k} label=${label} value=${fields[k]||''} onInput=${setF(k)} optional=${true} rows="2"/>`)}
+    <//>`;
+}
+
+function FollowUpSheet({item, onSave, onClose}){
+  const [due,setDue] = useState((item.followUp&&item.followUp.due)||'');
+  const [note,setNote] = useState((item.followUp&&item.followUp.note)||'');
+  return html`
+    <${Sheet} onClose=${onClose} label="Opfølgning">
+      <h2>Opfølgning</h2>
+      <p className="taskref">${item.title}</p>
+      <${DateField} label="Hvornår skal du følge op?" value=${due} onInput=${setDue}/>
+      <${TextField} label="Note" value=${note} onInput=${setNote} optional=${true} placeholder="Fx hvem eller hvad du venter på"/>
+      <p className="hint">Elementet dukker op under Opfølgninger på forsiden, når datoen nås.</p>
+      <div className="sheet-actions">
+        <button className="btn btn-primary" disabled=${!due} onClick=${()=>onSave({due, note:note.trim()})}>Gem</button>
+        ${item.followUp && item.followUp.due ? html`
+          <button className="btn btn-dangerghost" onClick=${()=>onSave(null)}>Fjern opfølgning</button>` : null}
+        <button className="btn btn-ghost" onClick=${onClose}>Annuller</button>
+      </div>
+    <//>`;
+}
+
+function WaitingSheet({task, onSave, onClose}){
+  const [who,setWho] = useState(task.waitingFor||'');
+  const [due,setDue] = useState((task.followUp&&task.followUp.due)||'');
+  return html`
+    <${Sheet} onClose=${onClose} label="Afventer">
+      <h2>Afventer</h2>
+      <p className="taskref">${task.title}</p>
+      <${TextField} label="Hvad/hvem afventer du?" value=${who} onInput=${setWho} optional=${true} autoFocus=${true}/>
+      <${DateField} label="Hvornår skal du følge op?" value=${due} onInput=${setDue} optional=${true}/>
+      <div className="sheet-actions">
+        <button className="btn btn-primary" onClick=${()=>onSave(who.trim(), due||null)}>Gem</button>
+        <button className="btn btn-ghost" onClick=${onClose}>Annuller</button>
+      </div>
+    <//>`;
+}
+
+function ConvertIdeaSheet({task, onSave, onSkip, onClose}){
+  const [note,setNote] = useState('');
   return html`
     <${Sheet} onClose=${onClose} label="Hvad blev besluttet?">
       <h2>Hvad blev besluttet?</h2>
       <p className="taskref">${task.title}</p>
       <div className="field">
-        <input className="input" value=${note} autoFocus placeholder="Én linje — må gerne stå tom"
+        <input className="input" value=${note} autoFocus=${true} placeholder="Én linje — må gerne stå tom"
                onInput=${(e)=>setNote(e.target.value)}
                onKeyDown=${(e)=>{if(e.key==='Enter'){e.preventDefault(); onSave(note.trim());}}}/>
       </div>
-      <p className="hint">Datoen stemples automatisk, og opgaven kommer med i Beslutninger.</p>
+      <p className="hint">Skriver du en linje, journaliseres den som en beslutning med dagens dato — og opgaven kobles til den.</p>
       <div className="sheet-actions">
         <button className="btn btn-primary" onClick=${()=>onSave(note.trim())}>Gem</button>
-        ${allowSkip
-          ? html`<button className="btn btn-ghost" onClick=${onSkip}>Spring over</button>`
-          : html`<button className="btn btn-ghost" onClick=${onClose}>Annuller</button>`}
+        <button className="btn btn-ghost" onClick=${onSkip}>Spring over</button>
       </div>
     <//>`;
 }
 
-function MenuSheet({task, onEdit, onDecide, onDelete, onClose}){
+function TypeChooserSheet({onPick, onClose}){
+  const rows = [
+    ['task', Icon.circlecheck, 'Opgave', 'Noget der skal gøres'],
+    ['decision', Icon.stamp, 'Beslutning', 'Journalisér hvad der er besluttet'],
+    ['agreement', Icon.calendar, 'Aftale', 'Hvad er aftalt, og med hvem'],
+    ['note', Icon.doc, 'Note', 'Hurtig registrering'],
+    ['standard', Icon.book, 'Standard', 'Fast fremgangsmåde eller procedure'],
+    ['idea', Icon.bulb, 'Idé', 'Parkér en tanke — beslut senere']
+  ];
   return html`
-    <${Sheet} onClose=${onClose} label="Menu for opgaven">
-      <h2>${task.title}</h2>
-      <button className="menu-item" onClick=${onEdit}><${Icon.pen}/> Rediger</button>
-      ${!task.decidedAt ? html`
-        <button className="menu-item" onClick=${onDecide}><${Icon.stamp}/> Marker som besluttet</button>
-      ` : null}
-      <button className="menu-item danger" onClick=${onDelete}><${Icon.trash}/> Slet</button>
-      <div className="sheet-actions">
-        <button className="btn btn-ghost" onClick=${onClose}>Annuller</button>
-      </div>
+    <${Sheet} onClose=${onClose} label="Hvad vil du tilføje?">
+      <h2>Hvad vil du tilføje?</h2>
+      ${rows.map(([k,Ic,label,sub])=>html`
+        <button key=${k} className=${'menu-item'+(k==='idea'?' light':'')} onClick=${()=>onPick(k)}>
+          <${Ic}/>
+          <span><span className="mi-title">${label}</span><span className="mi-sub">${sub}</span></span>
+        </button>`)}
     <//>`;
 }
 
@@ -662,175 +1312,267 @@ function ConfirmSheet({title, body, confirmLabel, onConfirm, onClose}){
     <//>`;
 }
 
+function VersionSheet({version, onClose}){
+  return html`
+    <${Sheet} onClose=${onClose} label=${'Version '+version.version}>
+      <h2>${version.title}</h2>
+      <p className="taskref">Version ${version.version} · gemt ${fmtDate(version.savedAt)} · skrivebeskyttet</p>
+      ${STD_FIELDS.map(([k,label])=>html`<${Field} key=${k} label=${label} value=${(version.fields||{})[k]}/>`)}
+      <div className="sheet-actions">
+        <button className="btn btn-ghost" onClick=${onClose}>Luk</button>
+      </div>
+    <//>`;
+}
+
 /* ================= App ================= */
 
 function App(){
   const [data,setData] = useState(loadData);
-  const [view,setView] = useState({name:'categories'});
-  const [catTab,setCatTab] = useState('open');
-  const [decFilter,setDecFilter] = useState(null);
+  const [stack,setStack] = useState([{name:'today'}]);
   const [sheet,setSheet] = useState(null);
+  const [decFilter,setDecFilter] = useState(null);
+  const [stdFilter,setStdFilter] = useState(null);
+  const [stdStatusFilter,setStdStatusFilter] = useState('all');
+  const [catSection,setCatSection] = useState('tasks');
 
   useEffect(()=>persist(data),[data]);
 
-  const now = ()=>new Date().toISOString();
+  const view = stack[stack.length-1];
+  const push = (v)=>setStack(s=>[...s,v]);
+  const pop = ()=>setStack(s=>s.length>1?s.slice(0,-1):s);
+  const resetTo = (name)=>setStack([{name}]);
 
-  const patchTask = (id,patch)=>setData(d=>({...d, tasks:d.tasks.map(t=>t.id===id?{...t,...patch}:t)}));
+  const patchItem = (id,patch)=>setData(d=>({...d, items:d.items.map(i=>i.id===id?{...i,...patch, updatedAt:nowIso()}:i)}));
 
-  const openCounts = useMemo(()=>{
-    const m = {};
-    for(const t of data.tasks) if(t.status==='open') m[t.categoryId]=(m[t.categoryId]||0)+1;
-    return m;
-  },[data.tasks]);
+  const openItem = (item)=>push({name:'item', id:item.id});
+  const openCategory = (id)=>{ setCatSection('tasks'); push({name:'category', id}); };
 
-  /* --- Navigation --- */
-  const goCategory = (id, tab)=>{ setCatTab(tab||'open'); setView({name:'category', id}); };
-  const goTask = (t)=>{
-    const tab = t.status==='done'?'done':(t.status==='idea'?'idea':'open');
-    goCategory(t.categoryId, tab);
-  };
-
-  /* --- Opgavehandlinger --- */
-  const actions = {
-    startCreate: (categoryId, status)=>setSheet({type:'task', categoryId, status, task:null}),
-
+  /* ---- API til skærme og ark ---- */
+  const api = {
+    /* Opgaver */
     toggleDone: (t)=>{
-      if(t.status==='done') patchTask(t.id,{status:'open', completedAt:null});
-      else patchTask(t.id,{status:'done', completedAt:now()});
+      if(t.status==='done') patchItem(t.id,{status:'not_started', completedAt:null});
+      else patchItem(t.id,{status:'done', completedAt:nowIso(), myDay:false});
     },
+    setTaskStatus: (t,s)=>{
+      if(s===t.status) return;
+      if(s==='done'){ patchItem(t.id,{status:'done', completedAt:nowIso(), myDay:false}); return; }
+      if(s==='waiting'){ setSheet({type:'waiting', itemId:t.id}); return; }
+      patchItem(t.id,{status:s, completedAt:null});
+    },
+    toggleMyDay: (t)=>patchItem(t.id,{myDay:!t.myDay, myDayAt: !t.myDay?nowIso():null}),
 
-    startConvert: (t)=>setSheet({type:'decision', taskId:t.id, mode:'convert'}),
+    /* Idéer */
+    startConvertIdea: (t)=>setSheet({type:'convertIdea', itemId:t.id}),
 
-    openMenu: (t)=>setSheet({type:'menu', taskId:t.id}),
-  };
+    /* Opret/rediger */
+    startAdd: (categoryId, section)=>{
+      const direct = {ideas:'idea', decisions:'decision', agreements:'agreement', notes:'note', standards:'standard'}[section];
+      if(direct) setSheet({type:'form', formType:direct, categoryId});
+      else setSheet({type:'chooser', categoryId});
+    },
+    startEdit: (item)=>setSheet({type:'form', formType: item.type==='task' ? (item.idea?'idea':'task') : item.type, itemId:item.id, categoryId:item.categoryId}),
+    startTaskFrom: (origin)=>setSheet({type:'form', formType:'task', categoryId:origin.categoryId, originId:origin.id}),
 
-  const sheetTask = sheet && sheet.taskId ? data.tasks.find(t=>t.id===sheet.taskId) : null;
+    /* Opfølgning */
+    startFollowUp: (item)=>setSheet({type:'followUp', itemId:item.id}),
+    clearFollowUp: (id)=>patchItem(id,{followUp:null}),
 
-  const saveTask = (title,note)=>{
-    if(sheet.task){
-      patchTask(sheet.task.id,{title,note});
-    }else{
-      setData(d=>({...d, tasks:[...d.tasks, {
-        id:uid(), categoryId:sheet.categoryId, title, note,
-        status:sheet.status, createdAt:now(),
-        decidedAt:null, decisionNote:'', completedAt:null
-      }]}));
-    }
-    setSheet(null);
-  };
+    /* Standarder */
+    setStandardStatus: (item,s)=>{ if(s!==item.status) patchItem(item.id,{status:s}); },
+    showVersion: (item,v)=>setSheet({type:'version', itemId:item.id, version:v}),
 
-  const saveDecision = (note)=>{
-    const patch = {decidedAt:now(), decisionNote:note};
-    if(sheet.mode==='convert') patch.status='open';
-    patchTask(sheet.taskId, patch);
-    setSheet(null);
-  };
-  const skipDecision = ()=>{
-    patchTask(sheet.taskId,{decidedAt:now(), status:'open'});
-    setSheet(null);
-  };
+    /* Slet */
+    confirmDelete: (item)=>setSheet({type:'confirmDel', itemId:item.id}),
 
-  /* --- Kategorihandlinger --- */
-  const catActions = {
+    /* Kategorier */
     renameCategory: (id,name)=>setData(d=>({...d, categories:d.categories.map(c=>c.id===id?{...c,name:name.trim()||c.name}:c)})),
     recolorCategory: (id,color)=>setData(d=>({...d, categories:d.categories.map(c=>c.id===id?{...c,color}:c)})),
+    moveCategory: (id,dir)=>setData(d=>{
+      const cats = [...d.categories].sort((a,b)=>a.order-b.order);
+      const idx = cats.findIndex(c=>c.id===id);
+      const j = idx+dir;
+      if(idx<0 || j<0 || j>=cats.length) return d;
+      const tmp = cats[idx]; cats[idx] = cats[j]; cats[j] = tmp;
+      return {...d, categories: cats.map((c,i)=>({...c, order:i}))};
+    }),
     addCategory: ()=>setData(d=>{
       const order = d.categories.length ? Math.max(...d.categories.map(c=>c.order))+1 : 0;
-      const color = PALETTE[order % PALETTE.length];
-      return {...d, categories:[...d.categories, {id:uid(), name:'Ny kategori', color, order}]};
+      return {...d, categories:[...d.categories, {id:uid(), name:'Ny kategori', color:PALETTE[order%PALETTE.length], order}]};
     }),
     confirmDeleteCategory: (c)=>setSheet({type:'confirmCat', categoryId:c.id, name:c.name}),
+
+    /* Backup */
     exportData: ()=>{
       const blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = 'opgaver-backup-'+new Date().toISOString().slice(0,10)+'.json';
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
+      a.download = 'opgaver-backup-'+todayStr()+'.json';
+      document.body.appendChild(a); a.click(); a.remove();
       setTimeout(()=>URL.revokeObjectURL(a.href), 2000);
     },
     startImport: (text)=>{
       let parsed = null;
       try{ parsed = JSON.parse(text); }catch(e){}
-      if(!isValidData(parsed)){
-        setSheet({type:'importError'});
-        return;
-      }
-      setSheet({type:'confirmImport', payload:parsed});
+      const m = parsed ? (isV2(parsed) ? parsed : (isV1(parsed) ? migrateV1(parsed) : null)) : null;
+      if(!m){ setSheet({type:'importError'}); return; }
+      setSheet({type:'confirmImport', payload:m});
     }
   };
 
-  /* --- Skærmvalg --- */
+  const sheetItem = sheet && sheet.itemId ? data.items.find(i=>i.id===sheet.itemId) : null;
+
+  /* ---- Gem fra formularer ---- */
+  const saveForm = (formType, values)=>{
+    const s = sheet;
+    if(s.itemId){
+      const item = data.items.find(i=>i.id===s.itemId);
+      if(item && item.type==='standard'){
+        const changed = item.title!==values.title || JSON.stringify(item.fields||{})!==JSON.stringify(values.fields||{});
+        const versions = changed
+          ? [...(item.versions||[]), {version:(item.versions||[]).length+1, savedAt:item.updatedAt||item.createdAt, title:item.title, fields:item.fields||{}, status:item.status}]
+          : (item.versions||[]);
+        patchItem(s.itemId, {...values, versions});
+      }else{
+        patchItem(s.itemId, values);
+      }
+      setSheet(null);
+      return;
+    }
+    const type = formType==='idea' ? 'task' : formType;
+    const extra = formType==='idea' ? {idea:true} : {};
+    const item = newItem(type, s.categoryId, Object.assign(extra, values));
+    setData(d=>{
+      const relations = s.originId
+        ? [...d.relations, {id:uid(), fromId:s.originId, toId:item.id, kind:'skabte'}]
+        : d.relations;
+      return {...d, items:[...d.items, item], relations};
+    });
+    setSheet(null);
+  };
+
+  const convertIdea = (note)=>{
+    const t = sheetItem;
+    if(!t){ setSheet(null); return; }
+    setData(d=>{
+      let items = d.items.map(i=>i.id===t.id?{...i, idea:false, status:'not_started', updatedAt:nowIso()}:i);
+      let relations = d.relations;
+      if(note){
+        const dec = newItem('decision', t.categoryId, {title:t.title, what:note, decidedOn:todayStr()});
+        items = [...items, dec];
+        relations = [...relations, {id:uid(), fromId:dec.id, toId:t.id, kind:'skabte'}];
+      }
+      return {...d, items, relations};
+    });
+    setSheet(null);
+  };
+
+  /* ---- Skærmvalg ---- */
   let screen = null;
   if(view.name==='category'){
-    screen = html`<${CategoryScreen} data=${data} categoryId=${view.id} tab=${catTab}
-      onTab=${setCatTab} onBack=${()=>setView({name:'categories'})} actions=${actions}/>`;
-  }else if(view.name==='overview'){
-    screen = html`<${OverviewScreen} data=${data} onOpenTask=${goTask} actions=${actions}/>`;
+    screen = html`<${CategoryScreen} data=${data} categoryId=${view.id} section=${catSection}
+      onSection=${setCatSection} onBack=${pop} onOpenItem=${openItem} api=${api}/>`;
+  }else if(view.name==='item'){
+    screen = html`<${ItemScreen} data=${data} itemId=${view.id} onBack=${pop} onOpenItem=${openItem} api=${api}/>`;
+  }else if(view.name==='categories'){
+    screen = html`<${CategoriesScreen} data=${data} onOpenCategory=${openCategory} onOpenSettings=${()=>push({name:'settings'})}/>`;
   }else if(view.name==='decisions'){
-    screen = html`<${DecisionsScreen} data=${data} filter=${decFilter} onFilter=${setDecFilter} onOpenTask=${goTask}/>`;
+    screen = html`<${DecisionsScreen} data=${data} filter=${decFilter} onFilter=${setDecFilter} onOpenItem=${openItem}/>`;
+  }else if(view.name==='standards'){
+    screen = html`<${StandardsScreen} data=${data} filter=${stdFilter} onFilter=${setStdFilter}
+      statusFilter=${stdStatusFilter} onStatusFilter=${setStdStatusFilter} onOpenItem=${openItem}/>`;
   }else if(view.name==='settings'){
-    screen = html`<${SettingsScreen} data=${data} onBack=${()=>setView({name:'categories'})} actions=${catActions}/>`;
+    screen = html`<${SettingsScreen} data=${data} onBack=${pop} api=${api}/>`;
   }else{
-    screen = html`<${CategoriesScreen} data=${data} openCounts=${openCounts}
-      onOpenCategory=${goCategory} onOpenSettings=${()=>setView({name:'settings'})}/>`;
+    screen = html`<${TodayScreen} data=${data} api=${api} onOpenItem=${openItem} onOpenSettings=${()=>push({name:'settings'})}/>`;
   }
 
-  /* --- Ark --- */
+  /* ---- Ark ---- */
   let sheetEl = null;
   if(sheet){
-    if(sheet.type==='task'){
-      sheetEl = html`<${TaskSheet} initial=${sheet.task || {}} onSave=${saveTask} onClose=${()=>setSheet(null)}/>`;
-    }else if(sheet.type==='decision' && sheetTask){
-      sheetEl = html`<${DecisionSheet} task=${sheetTask}
-        allowSkip=${sheet.mode==='convert'}
-        onSave=${saveDecision} onSkip=${skipDecision} onClose=${()=>setSheet(null)}/>`;
-    }else if(sheet.type==='menu' && sheetTask){
-      sheetEl = html`<${MenuSheet} task=${sheetTask}
-        onEdit=${()=>setSheet({type:'task', task:sheetTask})}
-        onDecide=${()=>setSheet({type:'decision', taskId:sheetTask.id, mode:'mark'})}
-        onDelete=${()=>setSheet({type:'confirmDel', taskId:sheetTask.id})}
-        onClose=${()=>setSheet(null)}/>`;
-    }else if(sheet.type==='confirmDel' && sheetTask){
-      sheetEl = html`<${ConfirmSheet} title="Slet opgaven?" body=${sheetTask.title} confirmLabel="Slet"
-        onConfirm=${()=>{ setData(d=>({...d, tasks:d.tasks.filter(t=>t.id!==sheet.taskId)})); setSheet(null); }}
-        onClose=${()=>setSheet(null)}/>`;
+    const close = ()=>setSheet(null);
+    if(sheet.type==='chooser'){
+      sheetEl = html`<${TypeChooserSheet} onClose=${close}
+        onPick=${(k)=>setSheet({type:'form', formType:k, categoryId:sheet.categoryId})}/>`;
+    }else if(sheet.type==='form'){
+      const initial = sheetItem || {};
+      if(sheet.formType==='task'){
+        const origin = sheet.originId ? data.items.find(i=>i.id===sheet.originId) : null;
+        sheetEl = html`<${TaskForm} initial=${initial} onClose=${close} onSave=${(v)=>saveForm('task', v)}
+          title=${initial.id?'Rediger opgave':'Ny opgave'}
+          contextLine=${origin ? 'Ud fra: '+origin.title : null}/>`;
+      }
+      else if(sheet.formType==='idea') sheetEl = html`<${IdeaForm} initial=${initial} onClose=${close} onSave=${(v)=>saveForm('idea', v)}/>`;
+      else if(sheet.formType==='decision') sheetEl = html`<${DecisionForm} initial=${initial} onClose=${close} onSave=${(v)=>saveForm('decision', v)}/>`;
+      else if(sheet.formType==='agreement') sheetEl = html`<${AgreementForm} initial=${initial} onClose=${close} onSave=${(v)=>saveForm('agreement', v)}/>`;
+      else if(sheet.formType==='note') sheetEl = html`<${NoteForm} initial=${initial} onClose=${close} onSave=${(v)=>saveForm('note', v)}/>`;
+      else if(sheet.formType==='standard') sheetEl = html`<${StandardForm} initial=${initial} onClose=${close} onSave=${(v)=>saveForm('standard', v)}/>`;
+    }else if(sheet.type==='convertIdea' && sheetItem){
+      sheetEl = html`<${ConvertIdeaSheet} task=${sheetItem} onClose=${close}
+        onSave=${(note)=>convertIdea(note)} onSkip=${()=>convertIdea('')}/>`;
+    }else if(sheet.type==='waiting' && sheetItem){
+      sheetEl = html`<${WaitingSheet} task=${sheetItem} onClose=${close}
+        onSave=${(who,due)=>{
+          patchItem(sheetItem.id,{status:'waiting', completedAt:null, waitingFor:who,
+            followUp: due ? {due, note: who ? 'Afventer '+who : ''} : sheetItem.followUp});
+          setSheet(null);
+        }}/>`;
+    }else if(sheet.type==='followUp' && sheetItem){
+      sheetEl = html`<${FollowUpSheet} item=${sheetItem} onClose=${close}
+        onSave=${(fu)=>{ patchItem(sheetItem.id,{followUp:fu}); setSheet(null); }}/>`;
+    }else if(sheet.type==='version' && sheetItem){
+      sheetEl = html`<${VersionSheet} version=${sheet.version} onClose=${close}/>`;
+    }else if(sheet.type==='confirmDel' && sheetItem){
+      const delTitle = {task: sheetItem.idea ? 'Slet idéen?' : 'Slet opgaven?', decision:'Slet beslutningen?', agreement:'Slet aftalen?', note:'Slet noten?'}[sheetItem.type] || 'Slet?';
+      sheetEl = html`<${ConfirmSheet} title=${delTitle} body=${sheetItem.title} confirmLabel="Slet"
+        onConfirm=${()=>{
+          const delId = sheet.itemId;
+          setData(d=>({...d,
+            items: d.items.filter(i=>i.id!==delId),
+            relations: d.relations.filter(r=>r.fromId!==delId && r.toId!==delId)
+          }));
+          setSheet(null);
+          if(view.name==='item' && view.id===delId) pop();
+        }}
+        onClose=${close}/>`;
     }else if(sheet.type==='confirmCat'){
       sheetEl = html`<${ConfirmSheet} title="Slet kategorien?" body=${sheet.name} confirmLabel="Slet"
         onConfirm=${()=>{ setData(d=>({...d, categories:d.categories.filter(c=>c.id!==sheet.categoryId)})); setSheet(null); }}
-        onClose=${()=>setSheet(null)}/>`;
+        onClose=${close}/>`;
     }else if(sheet.type==='confirmImport'){
       const p = sheet.payload;
       sheetEl = html`<${ConfirmSheet} title="Importér backup?"
-        body=${'Filen indeholder '+p.tasks.length+' opgaver i '+p.categories.length+' kategorier. Import erstatter alle nuværende data.'}
+        body=${'Filen indeholder '+p.items.length+' elementer i '+p.categories.length+' kategorier. Import erstatter alle nuværende data.'}
         confirmLabel="Importér"
-        onConfirm=${()=>{ setData(p); setSheet(null); setView({name:'categories'}); }}
-        onClose=${()=>setSheet(null)}/>`;
+        onConfirm=${()=>{ setData(p); setSheet(null); resetTo('today'); }}
+        onClose=${close}/>`;
     }else if(sheet.type==='importError'){
-      sheetEl = html`<${Sheet} onClose=${()=>setSheet(null)} label="Filen kunne ikke læses">
+      sheetEl = html`<${Sheet} onClose=${close} label="Filen kunne ikke læses">
         <h2>Filen kunne ikke læses</h2>
         <p className="taskref">Vælg en JSON-fil, der er eksporteret fra denne app.</p>
         <div className="sheet-actions">
-          <button className="btn btn-ghost" onClick=${()=>setSheet(null)}>Luk</button>
+          <button className="btn btn-ghost" onClick=${close}>Luk</button>
         </div>
       <//>`;
     }
   }
 
-  /* --- Bundnavigation --- */
-  const navFor = view.name==='category' || view.name==='settings' ? 'categories' : view.name;
+  /* ---- Bundnavigation ---- */
+  const navRoot = {today:'today', categories:'categories', category:'categories', decisions:'decisions', standards:'standards'}[view.name] || null;
   const nav = html`
     <nav className="nav" aria-label="Hovednavigation">
       <div className="nav-inner">
-        <button className=${'nav-item'+(navFor==='categories'?' active':'')} onClick=${()=>setView({name:'categories'})}>
+        <button className=${'nav-item'+(navRoot==='today'?' active':'')} onClick=${()=>resetTo('today')}>
+          <${Icon.sun}/> I dag
+        </button>
+        <button className=${'nav-item'+(navRoot==='categories'?' active':'')} onClick=${()=>resetTo('categories')}>
           <${Icon.grid}/> Kategorier
         </button>
-        <button className=${'nav-item'+(navFor==='overview'?' active':'')} onClick=${()=>setView({name:'overview'})}>
-          <${Icon.rows}/> Overblik
+        <button className=${'nav-item'+(navRoot==='decisions'?' active':'')} onClick=${()=>resetTo('decisions')}>
+          <${Icon.stamp}/> Beslutninger
         </button>
-        <button className=${'nav-item'+(navFor==='decisions'?' active':'')} onClick=${()=>setView({name:'decisions'})}>
-          <${Icon.clock}/> Beslutninger
+        <button className=${'nav-item'+(navRoot==='standards'?' active':'')} onClick=${()=>resetTo('standards')}>
+          <${Icon.book}/> Standarder
         </button>
       </div>
     </nav>`;

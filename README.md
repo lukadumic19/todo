@@ -1,27 +1,37 @@
 # Opgaver
 
-Personlig arbejds-to-do-app til Luka — pædagogisk mellemleder på Havana.
+Personligt arbejds-, dokumentations- og hukommelsessystem til Luka —
+pædagogisk mellemleder på Havana.
 
 Én HTML-fil, React via CDN, ingen build-step, ingen server. Al data ligger i
 `localStorage` på telefonen. PWA, så den kan lægges på hjemmeskærmen på iPhone.
 
-## Sådan bruges den
+## Version 2
 
-- **Kategorier** er den faste ramme. En opgave hører til én kategori og skifter
-  aldrig kategori — kun status: *Ikke færdig*, *Idé* eller *Færdig*.
-- **Gør til opgave** flytter en idé til Ikke færdig og stempler beslutningen
-  med dato og en valgfri linje om, hvad der blev besluttet.
-- **Beslutninger** er en kronologisk log over alt, der er blevet besluttet —
-  uafhængigt af om opgaven bagefter er løst.
-- **Overblik** viser alt i gang på tværs af kategorier i én scroll.
-- **Backup**: Indstillinger → Eksportér data (JSON-fil) / Importér data.
+- **Fem registreringstyper** med hver sin faste formular: Opgave, Beslutning,
+  Aftale, Note og Standard — plus Idé som hurtig "parkeret tanke".
+- **Opgaver** har status (Ikke startet / I gang / Afventer / Færdig), deadline,
+  prioritet og "På min liste i dag". Afventer kan angive hvem/hvad og
+  opfølgningsdato. Færdige opgaver slettes aldrig automatisk — de flyttes til
+  Afsluttet med dato.
+- **Kategorier** er brugerdefinerede mapper: navn, farve, rækkefølge, opret og
+  slet (kun tomme). Ét element hører altid til præcis én kategori.
+- **Beslutninger og Aftaler** journaliseres og kan skabe opgaver — relationen
+  bevares, så man altid kan se, hvorfor en opgave findes.
+- **Standarder** har status (Kladde / Gældende / Udgået) og automatisk
+  versionshistorik: Hver redigering bevarer den tidligere version, som kan
+  åbnes skrivebeskyttet. Standarder kan ikke slettes.
+- **Opfølgning** er en funktion, ikke en type: Alle elementer kan få en
+  opfølgningsdato og dukker op på forsiden, når datoen nås.
+- **Forsiden "I dag"** viser opfølgninger, Min dag og deadlines (7 dage frem).
+- **Migration**: v1-data konverteres automatisk ved første åbning; den rå
+  v1-JSON gemmes urørt under localStorage-nøglen `lukas-todo-v1-backup`.
+  Gamle v1-backupfiler kan stadig importeres.
 
 ## Installation på iPhone
 
-1. Læg filerne på et websted med HTTPS (fx GitHub Pages: Settings → Pages →
-   Deploy from a branch).
-2. Åbn adressen i Safari.
-3. Tryk på Del-knappen → **Føj til hjemmeskærm**.
+Appen serveres via GitHub Pages (gh-pages-branchen). Åbn adressen i Safari og
+vælg Del → **Føj til hjemmeskærm**.
 
 ## Filer
 
@@ -32,7 +42,7 @@ Personlig arbejds-to-do-app til Luka — pædagogisk mellemleder på Havana.
 | `sw.js` | Service worker (offline-cache) |
 | `icon-180.png` / `icon-512.png` | App-ikoner |
 
-## Uden for version 1
+## Senere lag (ikke bygget endnu)
 
-Deadlines, påmindelser, prioritering, søgning, gentagne opgaver, deling,
-statistik. Tilføjes tidligst, når appen har været i brug en uge.
+AI-assistent oven på de manuelle kernefunktioner, søgning, gentagne opgaver,
+deling. Kernen skal fungere uden.
