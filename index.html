@@ -114,6 +114,27 @@ input,textarea,select{font:inherit;color:inherit}
   font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;line-height:1.4;
 }
 
+/* ---------- Kalender ---------- */
+.cal-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:10px 8px 12px;margin-bottom:12px}
+.cal-head{display:flex;align-items:center;gap:4px;margin-bottom:4px}
+.cal-title{flex:1;text-align:center;font-size:16px;font-weight:600}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.cal-dow{text-align:center;font-size:11px;font-weight:600;color:var(--muted);padding:4px 0;text-transform:uppercase}
+.cal-day{
+  position:relative;min-height:44px;border-radius:8px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-size:14px;font-variant-numeric:tabular-nums;color:var(--text);text-align:center;
+}
+.cal-day.out{color:var(--faint)}
+.cal-day.today{color:var(--accent);font-weight:600}
+.cal-day.sel{background:var(--accent);color:var(--on-accent);font-weight:600}
+.cal-dots{display:flex;gap:3px;height:5px;margin-top:3px}
+.cal-dots span{width:5px;height:5px;border-radius:50%}
+.cal-day.sel .cal-dots span{background:var(--on-accent)}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--muted);margin:0 4px 12px;flex-wrap:wrap}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:7px;height:7px;border-radius:50%;display:inline-block}
+
 /* ---------- Kategori-forside ---------- */
 .catrow{
   display:flex;align-items:center;gap:12px;width:100%;
@@ -364,6 +385,9 @@ const ACCENTS = {
 };
 const DEFAULT_SETTINGS = {theme:'auto', accent:'petrol', name:'', showWeather:false};
 
+const CAL_LABEL = {work:'Arbejde', private:'Privat'};
+const CAL_COLORS = {work:'#46617A', private:'#6E9075'};
+
 const DEFAULT_CATEGORY_NAMES = [
   'Personale','Børn & pædagogik','Dokumentation','Møder',
   'Personalemøder','Ledelse','Standarder','Andet'
@@ -444,7 +468,8 @@ function defaultData(){
     schemaVersion: 2,
     categories: DEFAULT_CATEGORY_NAMES.map((name,i)=>({id:'c'+(i+1), name, color:PALETTE[i], order:i})),
     items: [],
-    relations: []
+    relations: [],
+    events: []
   };
 }
 
@@ -482,11 +507,11 @@ function migrateV1(d){
       relations.push({id:uid(), fromId:dec.id, toId:task.id, kind:'skabte'});
     }
   }
-  return { schemaVersion:2, categories: d.categories||[], items, relations };
+  return { schemaVersion:2, categories: d.categories||[], items, relations, events: [] };
 }
 
 function normalize(d){
-  if(isV2(d)) return d;
+  if(isV2(d)) return Array.isArray(d.events) ? d : {...d, events: []};
   if(isV1(d)){
     try{
       if(!localStorage.getItem(V1_BACKUP_KEY)) localStorage.setItem(V1_BACKUP_KEY, JSON.stringify(d));
@@ -655,6 +680,157 @@ function useWeather(enabled){
 }
 
 const WICONS = {sun:Icon.sun, suncloud:Icon.suncloud, cloud:Icon.cloud, fog:Icon.fog, rain:Icon.rain, snow:Icon.snow, thunder:Icon.thunder};
+
+/* ================= Kalender-hjælpere og ICS-import ================= */
+
+function dstr(d){
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function addDays(d, n){ const x = new Date(d); x.setDate(x.getDate()+n); return x; }
+function fmtTime(t){ return t ? t.replace(':','.') : ''; }
+
+/* Parser en ICS-dato: 20260815, 20260815T090000 (lokal) eller ...Z (UTC) */
+function parseIcsDate(v){
+  const m = String(v).match(/^(\d{4})(\d{2})(\d{2})(T(\d{2})(\d{2})(\d{2})?(Z)?)?/);
+  if(!m) return null;
+  if(!m[4]) return {date: new Date(+m[1], +m[2]-1, +m[3]), allDay: true};
+  const d = m[8]
+    ? new Date(Date.UTC(+m[1], +m[2]-1, +m[3], +m[5], +m[6], +(m[7]||0)))
+    : new Date(+m[1], +m[2]-1, +m[3], +m[5], +m[6], +(m[7]||0));
+  return {date: d, allDay: false};
+}
+
+function parseIcs(text){
+  const lines = String(text).replace(/\r\n[ \t]/g,'').replace(/\n[ \t]/g,'').split(/\r?\n/);
+  const events = [];
+  let cur = null;
+  for(const line of lines){
+    if(line==='BEGIN:VEVENT'){ cur = {exdates:[]}; continue; }
+    if(line==='END:VEVENT'){ if(cur) events.push(cur); cur = null; continue; }
+    if(!cur) continue;
+    const ci = line.indexOf(':');
+    if(ci<0) continue;
+    const head = line.slice(0,ci); const value = line.slice(ci+1);
+    const name = head.split(';')[0].toUpperCase();
+    if(name==='SUMMARY') cur.summary = value.replace(/\\,/g,',').replace(/\\;/g,';').replace(/\\n/g,' ').trim();
+    else if(name==='DTSTART') cur.start = parseIcsDate(value);
+    else if(name==='DTEND') cur.end = parseIcsDate(value);
+    else if(name==='RRULE') cur.rrule = value;
+    else if(name==='UID') cur.uid = value;
+    else if(name==='EXDATE') value.split(',').forEach(v=>{ const p=parseIcsDate(v); if(p) cur.exdates.push(dstr(p.date)); });
+  }
+  return events;
+}
+
+const DOW = {MO:1,TU:2,WE:3,TH:4,FR:5,SA:6,SU:0};
+
+/* Udvider en simpel RRULE til datoer i vinduet. Dækker DAILY/WEEKLY/MONTHLY/YEARLY
+   med INTERVAL, COUNT, UNTIL og BYDAY (ugentligt) — nok til langt de fleste kalendere. */
+function expandRrule(startDate, rrule, winStart, winEnd){
+  const p = {};
+  rrule.split(';').forEach(kv=>{ const [k,v]=kv.split('='); p[k]=v; });
+  const freq = p.FREQ; const interval = Math.max(1, +(p.INTERVAL||1));
+  let left = p.COUNT ? +p.COUNT : Infinity;
+  const untilP = p.UNTIL ? parseIcsDate(p.UNTIL) : null;
+  const until = untilP ? untilP.date : null;
+  const bydays = (freq==='WEEKLY' && p.BYDAY) ? p.BYDAY.split(',').map(s=>DOW[s.slice(-2)]).filter(x=>x!==undefined) : null;
+  const out = [];
+  if(freq==='DAILY' || (freq==='WEEKLY' && !bydays)){
+    const step = freq==='DAILY' ? interval : 7*interval;
+    let d = new Date(startDate);
+    for(let g=0; g<1000 && left>0; g++){
+      if(until && d>until) break;
+      if(d>winEnd) break;
+      if(d>=winStart) out.push(new Date(d));
+      left--;
+      d = addDays(d, step);
+    }
+  }else if(freq==='WEEKLY' && bydays){
+    const weekStart = addDays(startDate, -((startDate.getDay()+6)%7));
+    let d = new Date(startDate);
+    for(let g=0; g<3000 && left>0; g++){
+      if(until && d>until) break;
+      if(d>winEnd) break;
+      const weekIdx = Math.floor((d-weekStart)/(7*86400000));
+      if(bydays.includes(d.getDay()) && weekIdx%interval===0 && d>=startDate){
+        if(d>=winStart) out.push(new Date(d));
+        left--;
+      }
+      d = addDays(d, 1);
+    }
+  }else if(freq==='MONTHLY' || freq==='YEARLY'){
+    let d = new Date(startDate);
+    for(let g=0; g<600 && left>0; g++){
+      if(until && d>until) break;
+      if(d>winEnd) break;
+      if(d>=winStart) out.push(new Date(d));
+      left--;
+      const next = new Date(d);
+      if(freq==='MONTHLY') next.setMonth(next.getMonth()+interval);
+      else next.setFullYear(next.getFullYear()+interval);
+      if(next.getDate()!==d.getDate()){ next.setDate(0); }
+      d = next;
+    }
+  }else{
+    out.push(new Date(startDate));
+  }
+  return out.slice(0,500);
+}
+
+function hhmm(d){ return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }
+
+/* Omsætter en ICS-tekst til appens begivenheder for én kalender */
+function icsToEvents(text, calendar){
+  const raw = parseIcs(text);
+  const today = new Date();
+  const winStart = addDays(today, -90);
+  const winEnd = addDays(today, 550);
+  const out = [];
+  for(const ev of raw){
+    if(!ev.start || !ev.summary) continue;
+    const allDay = ev.start.allDay;
+    const durMs = ev.end ? (ev.end.date - ev.start.date) : 0;
+    const dates = ev.rrule ? expandRrule(ev.start.date, ev.rrule, winStart, winEnd) : [ev.start.date];
+    for(const d of dates){
+      if(d<winStart || d>winEnd) continue;
+      if(ev.exdates.includes(dstr(d))) continue;
+      const e = {
+        id: uid(), calendar, source:'ics', icsUid: ev.uid||null,
+        title: ev.summary, date: dstr(d),
+        start: allDay ? null : hhmm(d),
+        end: null, endDate: null, note: ''
+      };
+      if(!allDay && durMs>0 && durMs<86400000){
+        e.end = hhmm(new Date(d.getTime()+durMs));
+      }
+      if(allDay && durMs>86400000){
+        const endD = addDays(d, Math.round(durMs/86400000)-1);
+        e.endDate = dstr(endD);
+      }
+      out.push(e);
+      if(out.length>=2000) return out;
+    }
+  }
+  return out;
+}
+
+/* Alt der hører til en bestemt dato på tværs af begivenheder og systemets elementer */
+function entriesForDay(data, dateStr){
+  const events = (data.events||[]).filter(e=>
+    e.date===dateStr || (e.endDate && e.date<=dateStr && dateStr<=e.endDate));
+  const allDayE = events.filter(e=>!e.start).sort((a,b)=>a.title.localeCompare(b.title));
+  const timedE = events.filter(e=>e.start).sort((a,b)=>a.start.localeCompare(b.start));
+  const appItems = [];
+  for(const i of data.items){
+    if(i.type==='task' && !i.idea && i.status!=='done' && i.deadline===dateStr)
+      appItems.push({kind:'deadline', item:i});
+    if(i.followUp && i.followUp.due===dateStr && !(i.type==='task' && (i.status==='done'||i.idea)))
+      appItems.push({kind:'followup', item:i});
+    if(i.type==='agreement' && i.deadline===dateStr)
+      appItems.push({kind:'agreement', item:i});
+  }
+  return {allDayE, timedE, appItems};
+}
 
 /* ================= Rækker ================= */
 
@@ -1000,6 +1176,125 @@ function StandardsScreen({data, filter, onFilter, statusFilter, onStatusFilter, 
               badge=${html`<span className=${'badge'+(i.status==='active'?' active':i.status==='retired'?' retired':'')}>${STD_STATUS[i.status]}</span>`}
               meta=${[c?html`<span key="c">${c.name}</span>`:null, html`<span key="d">Senest ændret ${fmtDate(i.updatedAt)}</span>`]}/>`;
           })}
+    </div>`;
+}
+
+/* ---------- Kalender ---------- */
+
+const MONTHS_DA = ['januar','februar','marts','april','maj','juni','juli','august','september','oktober','november','december'];
+
+function CalendarScreen({data, onOpenItem, api}){
+  const today = todayStr();
+  const [selected,setSelected] = useState(today);
+  const [ym,setYm] = useState(()=>({y:new Date().getFullYear(), m:new Date().getMonth()}));
+
+  const catById = Object.fromEntries(data.categories.map(c=>[c.id,c]));
+
+  /* markeringer pr. dag */
+  const markers = useMemo(()=>{
+    const map = {};
+    const mark = (ds, key)=>{ if(!map[ds]) map[ds]={}; map[ds][key]=true; };
+    for(const e of (data.events||[])){
+      if(e.endDate){
+        let d = new Date(+e.date.slice(0,4), +e.date.slice(5,7)-1, +e.date.slice(8,10));
+        for(let g=0; g<62 && dstr(d)<=e.endDate; g++){ mark(dstr(d), e.calendar); d = addDays(d,1); }
+      }else mark(e.date, e.calendar);
+    }
+    for(const i of data.items){
+      if(i.type==='task' && !i.idea && i.status!=='done' && i.deadline) mark(i.deadline,'app');
+      if(i.followUp && i.followUp.due && !(i.type==='task' && (i.status==='done'||i.idea))) mark(i.followUp.due,'app');
+      if(i.type==='agreement' && i.deadline) mark(i.deadline,'app');
+    }
+    return map;
+  },[data]);
+
+  const first = new Date(ym.y, ym.m, 1);
+  const lead = (first.getDay()+6)%7;
+  const gridStart = addDays(first, -lead);
+  const cells = [];
+  for(let i=0;i<42;i++) cells.push(addDays(gridStart, i));
+
+  const shift = (n)=>setYm(({y,m})=>{ const d = new Date(y, m+n, 1); return {y:d.getFullYear(), m:d.getMonth()}; });
+  const goToday = ()=>{ const n = new Date(); setYm({y:n.getFullYear(), m:n.getMonth()}); setSelected(today); };
+
+  const {allDayE, timedE, appItems} = entriesForDay(data, selected);
+  const selP = selected.split('-');
+  const selDate = new Date(+selP[0], +selP[1]-1, +selP[2]);
+  const selLabel = selDate.toLocaleDateString('da-DK',{weekday:'long', day:'numeric', month:'long'});
+  const empty = allDayE.length===0 && timedE.length===0 && appItems.length===0;
+
+  const kindLabel = {deadline:'Deadline', followup:'Følg op', agreement:'Aftale'};
+
+  return html`
+    <div className="screen has-fab">
+      <div className="hdr">
+        <h1>Kalender</h1>
+        <button className="iconbtn" aria-label="Importér kalender" onClick=${api.startCalImport}><${Icon.doc}/></button>
+      </div>
+      <div className="cal-card">
+        <div className="cal-head">
+          <button className="iconbtn" aria-label="Forrige måned" onClick=${()=>shift(-1)}><${Icon.back}/></button>
+          <button className="cal-title" onClick=${goToday} aria-label="Gå til i dag">
+            ${MONTHS_DA[ym.m].charAt(0).toUpperCase()+MONTHS_DA[ym.m].slice(1)} ${ym.y}
+          </button>
+          <button className="iconbtn" aria-label="Næste måned" onClick=${()=>shift(1)}><${Icon.chevron}/></button>
+        </div>
+        <div className="cal-grid">
+          ${['M','T','O','T','F','L','S'].map((d,i)=>html`<div key=${'d'+i} className="cal-dow">${d}</div>`)}
+          ${cells.map(d=>{
+            const ds = dstr(d);
+            const m = markers[ds]||{};
+            const cls = 'cal-day'
+              + (d.getMonth()!==ym.m ? ' out':'')
+              + (ds===today ? ' today':'')
+              + (ds===selected ? ' sel':'');
+            return html`
+              <button key=${ds} className=${cls} onClick=${()=>{ setSelected(ds); if(d.getMonth()!==ym.m) setYm({y:d.getFullYear(), m:d.getMonth()}); }}>
+                ${d.getDate()}
+                <span className="cal-dots">
+                  ${m.work?html`<span style=${{background:CAL_COLORS.work}}></span>`:null}
+                  ${m.private?html`<span style=${{background:CAL_COLORS.private}}></span>`:null}
+                  ${m.app?html`<span style=${{background:'var(--accent)'}}></span>`:null}
+                </span>
+              </button>`;
+          })}
+        </div>
+      </div>
+      <div className="legend">
+        <span><i style=${{background:CAL_COLORS.work}}></i> Arbejde</span>
+        <span><i style=${{background:CAL_COLORS.private}}></i> Privat</span>
+        <span><i style=${{background:'var(--accent)'}}></i> Fra systemet</span>
+      </div>
+
+      <div className="grouphdr">${selLabel.charAt(0).toUpperCase()+selLabel.slice(1)}</div>
+      ${empty ? html`<${Empty} text="Ingenting i kalenderen denne dag."/>` : null}
+      ${[...allDayE, ...timedE].map(e=>html`
+        <button key=${e.id} className="item-row" onClick=${()=>api.startEditEvent(e)}>
+          <span className="stripe" style=${{background:CAL_COLORS[e.calendar]}}></span>
+          <span style=${{width:'8px'}}></span>
+          <div className="row-body">
+            <div className="row-title">${e.title}</div>
+            <div className="row-meta">
+              <span className="evt-time">${e.start ? fmtTime(e.start)+(e.end?'–'+fmtTime(e.end):'') : 'Hele dagen'}</span>
+              <span>${CAL_LABEL[e.calendar]}</span>
+              ${e.source==='ics' ? html`<span>Importeret</span>` : null}
+            </div>
+            ${e.note ? html`<div className="row-snippet">${e.note}</div>` : null}
+          </div>
+          <span className="row-chev"><${Icon.chevron}/></span>
+        </button>`)}
+      ${appItems.map(({kind,item})=>{
+        const c = catById[item.categoryId];
+        return html`<${PlainRow} key=${item.id+kind} item=${item} category=${c} onOpen=${onOpenItem}
+          badge=${html`<span className="badge">${kindLabel[kind]}</span>`}
+          meta=${[html`<span key="t">${TYPE_LABEL[item.type]}</span>`, c?html`<span key="c">${c.name}</span>`:null]}/>`;
+      })}
+
+      <div className="fabwrap">
+        <button className="btn btn-primary" onClick=${()=>api.startEvent(selected)}>
+          <${Icon.plus}/> Ny begivenhed
+        </button>
+      </div>
     </div>`;
 }
 
@@ -1433,6 +1728,71 @@ function StandardForm({initial, onSave, onClose}){
     <//>`;
 }
 
+function EventForm({initial, onSave, onDelete, onClose}){
+  const [f,setF] = useState({
+    title: initial.title||'', calendar: initial.calendar||'work',
+    date: initial.date||todayStr(), start: initial.start||'', end: initial.end||'',
+    note: initial.note||''
+  });
+  const set=(k)=>(v)=>setF(s=>({...s,[k]:v}));
+  return html`
+    <${Sheet} onClose=${onClose} label=${initial.id?'Rediger begivenhed':'Ny begivenhed'}>
+      <h2>${initial.id?'Rediger begivenhed':'Ny begivenhed'}</h2>
+      ${initial.source==='ics' ? html`<p className="taskref">Importeret begivenhed — ændringer overskrives ved næste import af samme kalender.</p>` : null}
+      <${TextField} label="Titel" value=${f.title} onInput=${set('title')} autoFocus=${!initial.id}/>
+      <div className="field">
+        <label>Kalender</label>
+        <${Seg} options=${[['work','Arbejde'],['private','Privat']]} value=${f.calendar} onChange=${set('calendar')}/>
+      </div>
+      <${DateField} label="Dato" value=${f.date} onInput=${set('date')}/>
+      <div className="field" style=${{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'8px'}}>
+        <div>
+          <label style=${{display:'block',fontSize:'13px',fontWeight:500,color:'var(--muted)',marginBottom:'6px'}}>Start <span className="opt">· valgfri</span></label>
+          <input type="time" className="input" value=${f.start} onInput=${(e)=>set('start')(e.target.value)}/>
+        </div>
+        <div>
+          <label style=${{display:'block',fontSize:'13px',fontWeight:500,color:'var(--muted)',marginBottom:'6px'}}>Slut <span className="opt">· valgfri</span></label>
+          <input type="time" className="input" value=${f.end} onInput=${(e)=>set('end')(e.target.value)}/>
+        </div>
+      </div>
+      <${TextField} label="Note" value=${f.note} onInput=${set('note')} optional=${true}/>
+      <div className="sheet-actions">
+        <button className="btn btn-primary" disabled=${!f.title.trim() || !f.date}
+          onClick=${()=>onSave({title:f.title.trim(), calendar:f.calendar, date:f.date,
+            start:f.start||null, end:(f.start&&f.end)?f.end:null, note:f.note.trim()})}>Gem</button>
+        ${initial.id ? html`<button className="btn btn-dangerghost" onClick=${onDelete}>Slet begivenhed</button>` : null}
+        <button className="btn btn-ghost" onClick=${onClose}>Annuller</button>
+      </div>
+    <//>`;
+}
+
+function CalImportSheet({counts, onPick, onClose}){
+  const onFile = (cal)=>(e)=>{
+    const f = e.target.files && e.target.files[0];
+    e.target.value = '';
+    if(!f) return;
+    const reader = new FileReader();
+    reader.onload = ()=>onPick(cal, String(reader.result));
+    reader.readAsText(f);
+  };
+  return html`
+    <${Sheet} onClose=${onClose} label="Importér kalender">
+      <h2>Importér kalender</h2>
+      <p className="hint">Eksportér din kalender som en .ics-fil (Google: Indstillinger → Importér og eksportér · iPhone/Outlook: del/eksportér kalender) og hent den ind her. En ny import af samme kalender erstatter de tidligere importerede begivenheder, så du kan opdatere ved at importere igen.</p>
+      <div className="sheet-actions" style=${{marginTop:0}}>
+        <label className="btn btn-secondary filelabel">
+          Til Arbejde (.ics)${counts.work?' · '+counts.work+' importeret':''}
+          <input type="file" accept=".ics,text/calendar" onChange=${onFile('work')}/>
+        </label>
+        <label className="btn btn-secondary filelabel">
+          Til Privat (.ics)${counts.private?' · '+counts.private+' importeret':''}
+          <input type="file" accept=".ics,text/calendar" onChange=${onFile('private')}/>
+        </label>
+        <button className="btn btn-ghost" onClick=${onClose}>Luk</button>
+      </div>
+    <//>`;
+}
+
 function FollowUpSheet({item, onSave, onClose}){
   const [due,setDue] = useState((item.followUp&&item.followUp.due)||'');
   const [note,setNote] = useState((item.followUp&&item.followUp.note)||'');
@@ -1631,6 +1991,18 @@ function App(){
     /* Personlige indstillinger */
     setSetting: (k,v)=>setData(d=>({...d, settings: Object.assign({}, DEFAULT_SETTINGS, d.settings||{}, {[k]:v})})),
 
+    /* Kalender */
+    startEvent: (date)=>setSheet({type:'event', initial:{date}}),
+    startEditEvent: (e)=>setSheet({type:'event', initial:e}),
+    startCalImport: ()=>setSheet({type:'calImport'}),
+    importIcs: (calendar, text)=>{
+      let added = null;
+      try{ added = icsToEvents(text, calendar); }catch(e){}
+      if(!added || !added.length){ setSheet({type:'icsResult', calendar, added:0}); return; }
+      setData(d=>({...d, events:[...(d.events||[]).filter(e=>!(e.source==='ics' && e.calendar===calendar)), ...added]}));
+      setSheet({type:'icsResult', calendar, added:added.length});
+    },
+
     /* Backup */
     exportData: ()=>{
       const blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
@@ -1643,7 +2015,7 @@ function App(){
     startImport: (text)=>{
       let parsed = null;
       try{ parsed = JSON.parse(text); }catch(e){}
-      const m = parsed ? (isV2(parsed) ? parsed : (isV1(parsed) ? migrateV1(parsed) : null)) : null;
+      const m = parsed ? (isV2(parsed) ? (Array.isArray(parsed.events)?parsed:{...parsed, events:[]}) : (isV1(parsed) ? migrateV1(parsed) : null)) : null;
       if(!m){ setSheet({type:'importError'}); return; }
       setSheet({type:'confirmImport', payload:m});
     }
@@ -1705,6 +2077,8 @@ function App(){
     screen = html`<${ItemScreen} data=${data} itemId=${view.id} onBack=${pop} onOpenItem=${openItem} api=${api}/>`;
   }else if(view.name==='categories'){
     screen = html`<${CategoriesScreen} data=${data} onOpenCategory=${openCategory} onOpenSettings=${()=>push({name:'settings'})}/>`;
+  }else if(view.name==='calendar'){
+    screen = html`<${CalendarScreen} data=${data} onOpenItem=${openItem} api=${api}/>`;
   }else if(view.name==='decisions'){
     screen = html`<${DecisionsScreen} data=${data} filter=${decFilter} onFilter=${setDecFilter} onOpenItem=${openItem}/>`;
   }else if(view.name==='standards'){
@@ -1736,6 +2110,39 @@ function App(){
       else if(sheet.formType==='agreement') sheetEl = html`<${AgreementForm} initial=${initial} onClose=${close} onSave=${(v)=>saveForm('agreement', v)}/>`;
       else if(sheet.formType==='note') sheetEl = html`<${NoteForm} initial=${initial} onClose=${close} onSave=${(v)=>saveForm('note', v)}/>`;
       else if(sheet.formType==='standard') sheetEl = html`<${StandardForm} initial=${initial} onClose=${close} onSave=${(v)=>saveForm('standard', v)}/>`;
+    }else if(sheet.type==='event'){
+      const init = sheet.initial||{};
+      sheetEl = html`<${EventForm} initial=${init} onClose=${close}
+        onSave=${(v)=>{
+          if(init.id){
+            setData(d=>({...d, events:(d.events||[]).map(e=>e.id===init.id?{...e,...v}:e)}));
+          }else{
+            setData(d=>({...d, events:[...(d.events||[]), {id:uid(), source:'manual', icsUid:null, endDate:null, ...v}]}));
+          }
+          setSheet(null);
+        }}
+        onDelete=${()=>setSheet({type:'confirmDelEvent', eventId:init.id, title:init.title})}/>`;
+    }else if(sheet.type==='confirmDelEvent'){
+      sheetEl = html`<${ConfirmSheet} title="Slet begivenheden?" body=${sheet.title} confirmLabel="Slet"
+        onConfirm=${()=>{ setData(d=>({...d, events:(d.events||[]).filter(e=>e.id!==sheet.eventId)})); setSheet(null); }}
+        onClose=${close}/>`;
+    }else if(sheet.type==='calImport'){
+      const counts = {
+        work: (data.events||[]).filter(e=>e.source==='ics'&&e.calendar==='work').length,
+        private: (data.events||[]).filter(e=>e.source==='ics'&&e.calendar==='private').length
+      };
+      sheetEl = html`<${CalImportSheet} counts=${counts} onClose=${close}
+        onPick=${(cal,text)=>api.importIcs(cal,text)}/>`;
+    }else if(sheet.type==='icsResult'){
+      sheetEl = html`<${Sheet} onClose=${close} label="Import">
+        <h2>${sheet.added ? 'Kalender importeret' : 'Ingenting importeret'}</h2>
+        <p className="taskref">${sheet.added
+          ? sheet.added+' begivenheder blev importeret til '+CAL_LABEL[sheet.calendar]+'.'
+          : 'Filen indeholdt ingen begivenheder, der kunne læses. Vælg en .ics-fil eksporteret fra din kalender.'}</p>
+        <div className="sheet-actions">
+          <button className="btn btn-ghost" onClick=${close}>Luk</button>
+        </div>
+      <//>`;
     }else if(sheet.type==='convertIdea' && sheetItem){
       sheetEl = html`<${ConvertIdeaSheet} task=${sheetItem} onClose=${close}
         onSave=${(note)=>convertIdea(note)} onSkip=${()=>convertIdea('')}/>`;
@@ -1787,12 +2194,15 @@ function App(){
   }
 
   /* ---- Bundnavigation ---- */
-  const navRoot = {today:'today', categories:'categories', category:'categories', decisions:'decisions', standards:'standards'}[view.name] || null;
+  const navRoot = {today:'today', calendar:'calendar', categories:'categories', category:'categories', decisions:'decisions', standards:'standards'}[view.name] || null;
   const nav = html`
     <nav className="nav" aria-label="Hovednavigation">
       <div className="nav-inner">
         <button className=${'nav-item'+(navRoot==='today'?' active':'')} onClick=${()=>resetTo('today')}>
           <${Icon.sun}/> I dag
+        </button>
+        <button className=${'nav-item'+(navRoot==='calendar'?' active':'')} onClick=${()=>resetTo('calendar')}>
+          <${Icon.calendar}/> Kalender
         </button>
         <button className=${'nav-item'+(navRoot==='categories'?' active':'')} onClick=${()=>resetTo('categories')}>
           <${Icon.grid}/> Kategorier

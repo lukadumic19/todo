@@ -23,7 +23,17 @@ pædagogisk mellemleder på Havana.
   åbnes skrivebeskyttet. Standarder kan ikke slettes.
 - **Opfølgning** er en funktion, ikke en type: Alle elementer kan få en
   opfølgningsdato og dukker op på forsiden, når datoen nås.
-- **Forsiden "I dag"** viser opfølgninger, Min dag og deadlines (7 dage frem).
+- **Forsiden "I dag"** har et hero-kort med hilsen, dato og levende ur, valgfrit
+  vejr (Open-Meteo, telefonens placering) og dagens status — derunder
+  opfølgninger, Min dag og deadlines (7 dage frem).
+- **Kalender** med to kalendere, Arbejde og Privat: månedsoversigt med
+  farveprikker, dagsliste og egne begivenheder. Kalendere kan importeres fra
+  .ics-filer (Google, iPhone, Outlook); en ny import af samme kalender
+  erstatter de tidligere importerede begivenheder, mens egne begivenheder
+  bevares. Deadlines, opfølgninger og aftaler fra systemet vises automatisk
+  i kalenderen.
+- **Personalisering**: lyst/mørkt/automatisk tema, seks accentfarver og
+  valgfrit navn til hilsenen.
 - **Migration**: v1-data konverteres automatisk ved første åbning; den rå
   v1-JSON gemmes urørt under localStorage-nøglen `lukas-todo-v1-backup`.
   Gamle v1-backupfiler kan stadig importeres.
