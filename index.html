@@ -128,12 +128,21 @@ input,textarea,select{font:inherit;color:inherit}
 .cal-day.out{color:var(--faint)}
 .cal-day.today{color:var(--accent);font-weight:600}
 .cal-day.sel{background:var(--accent);color:var(--on-accent);font-weight:600}
-.cal-dots{display:flex;gap:3px;height:5px;margin-top:3px}
-.cal-dots span{width:5px;height:5px;border-radius:50%}
-.cal-day.sel .cal-dots span{background:var(--on-accent)}
-.legend{display:flex;gap:14px;font-size:12px;color:var(--muted);margin:0 4px 12px;flex-wrap:wrap}
-.legend span{display:inline-flex;align-items:center;gap:6px}
-.legend i{width:7px;height:7px;border-radius:50%;display:inline-block}
+.cal-dots{display:flex;gap:3px;height:6px;margin-top:4px}
+.cal-dots span{width:6px;height:6px;border-radius:50%}
+.cal-day.sel .cal-dots{background:var(--on-accent);border-radius:999px;padding:2px 3px;margin-top:2px;height:auto}
+.legend{display:flex;gap:8px;font-size:12px;color:var(--muted);margin:0 2px 14px;flex-wrap:wrap}
+.legend .ctag{font-size:12px}
+
+/* farvemærkat for kategori/kalender */
+.ctag{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:12.5px;font-weight:500;line-height:1;
+  border-radius:999px;padding:5px 10px 5px 8px;white-space:nowrap;
+}
+.ctag i{width:8px;height:8px;border-radius:50%;display:inline-block;flex:none}
+.cal-list .stripe{width:6px}
+.cal-list .row-meta{gap:8px;align-items:center}
 
 /* ---------- Kategori-forside ---------- */
 .catrow{
@@ -596,6 +605,17 @@ function Sheet({onClose, children, label}){
 }
 
 function Empty({text}){ return html`<div className="empty">${text}</div>`; }
+
+/* Farvemærkat der viser hvilken kategori eller kalender noget hører til */
+function CTag({color, label}){
+  return html`
+    <span className="ctag" style=${{
+      background:'color-mix(in srgb, '+color+' 16%, transparent)',
+      color:'color-mix(in srgb, '+color+' 72%, var(--text))'
+    }}>
+      <i style=${{background:color}}></i>${label}
+    </span>`;
+}
 
 function Seg({options, value, onChange, cols3}){
   return html`
@@ -1190,20 +1210,27 @@ function CalendarScreen({data, onOpenItem, api}){
 
   const catById = Object.fromEntries(data.categories.map(c=>[c.id,c]));
 
-  /* markeringer pr. dag */
+  /* Farvemarkeringer pr. dag: kalenderfarve for begivenheder,
+     kategoriens egen farve for alt der kommer fra systemet. */
   const markers = useMemo(()=>{
     const map = {};
-    const mark = (ds, key)=>{ if(!map[ds]) map[ds]={}; map[ds][key]=true; };
+    const add = (ds, color)=>{
+      if(!color || !ds) return;
+      if(!map[ds]) map[ds] = [];
+      if(!map[ds].includes(color)) map[ds].push(color);
+    };
     for(const e of (data.events||[])){
       if(e.endDate){
         let d = new Date(+e.date.slice(0,4), +e.date.slice(5,7)-1, +e.date.slice(8,10));
-        for(let g=0; g<62 && dstr(d)<=e.endDate; g++){ mark(dstr(d), e.calendar); d = addDays(d,1); }
-      }else mark(e.date, e.calendar);
+        for(let g=0; g<62 && dstr(d)<=e.endDate; g++){ add(dstr(d), CAL_COLORS[e.calendar]); d = addDays(d,1); }
+      }else add(e.date, CAL_COLORS[e.calendar]);
     }
     for(const i of data.items){
-      if(i.type==='task' && !i.idea && i.status!=='done' && i.deadline) mark(i.deadline,'app');
-      if(i.followUp && i.followUp.due && !(i.type==='task' && (i.status==='done'||i.idea))) mark(i.followUp.due,'app');
-      if(i.type==='agreement' && i.deadline) mark(i.deadline,'app');
+      const c = catById[i.categoryId];
+      if(!c) continue;
+      if(i.type==='task' && !i.idea && i.status!=='done' && i.deadline) add(i.deadline, c.color);
+      if(i.followUp && i.followUp.due && !(i.type==='task' && (i.status==='done'||i.idea))) add(i.followUp.due, c.color);
+      if(i.type==='agreement' && i.deadline) add(i.deadline, c.color);
     }
     return map;
   },[data]);
@@ -1213,6 +1240,26 @@ function CalendarScreen({data, onOpenItem, api}){
   const gridStart = addDays(first, -lead);
   const cells = [];
   for(let i=0;i<42;i++) cells.push(addDays(gridStart, i));
+
+  /* Signaturforklaring: kun det der faktisk optræder i den viste måned */
+  const legend = useMemo(()=>{
+    const from = dstr(gridStart), to = dstr(cells[41]);
+    const inRange = (d)=>d && d>=from && d<=to;
+    const cals = new Set();
+    for(const e of (data.events||[])){
+      if(inRange(e.date) || (e.endDate && e.date<=to && e.endDate>=from)) cals.add(e.calendar);
+    }
+    const catIds = new Set();
+    for(const i of data.items){
+      if(i.type==='task' && !i.idea && i.status!=='done' && inRange(i.deadline)) catIds.add(i.categoryId);
+      if(i.followUp && inRange(i.followUp.due) && !(i.type==='task' && (i.status==='done'||i.idea))) catIds.add(i.categoryId);
+      if(i.type==='agreement' && inRange(i.deadline)) catIds.add(i.categoryId);
+    }
+    return {
+      cals: ['work','private'].filter(k=>cals.has(k)),
+      cats: [...data.categories].sort((a,b)=>a.order-b.order).filter(c=>catIds.has(c.id))
+    };
+  },[data, ym.y, ym.m]);
 
   const shift = (n)=>setYm(({y,m})=>{ const d = new Date(y, m+n, 1); return {y:d.getFullYear(), m:d.getMonth()}; });
   const goToday = ()=>{ const n = new Date(); setYm({y:n.getFullYear(), m:n.getMonth()}); setSelected(today); };
@@ -1243,7 +1290,7 @@ function CalendarScreen({data, onOpenItem, api}){
           ${['M','T','O','T','F','L','S'].map((d,i)=>html`<div key=${'d'+i} className="cal-dow">${d}</div>`)}
           ${cells.map(d=>{
             const ds = dstr(d);
-            const m = markers[ds]||{};
+            const m = markers[ds]||[];
             const cls = 'cal-day'
               + (d.getMonth()!==ym.m ? ' out':'')
               + (ds===today ? ' today':'')
@@ -1252,43 +1299,46 @@ function CalendarScreen({data, onOpenItem, api}){
               <button key=${ds} className=${cls} onClick=${()=>{ setSelected(ds); if(d.getMonth()!==ym.m) setYm({y:d.getFullYear(), m:d.getMonth()}); }}>
                 ${d.getDate()}
                 <span className="cal-dots">
-                  ${m.work?html`<span style=${{background:CAL_COLORS.work}}></span>`:null}
-                  ${m.private?html`<span style=${{background:CAL_COLORS.private}}></span>`:null}
-                  ${m.app?html`<span style=${{background:'var(--accent)'}}></span>`:null}
+                  ${(m||[]).slice(0,4).map((col,i)=>html`<span key=${i} style=${{background:col}}></span>`)}
                 </span>
               </button>`;
           })}
         </div>
       </div>
-      <div className="legend">
-        <span><i style=${{background:CAL_COLORS.work}}></i> Arbejde</span>
-        <span><i style=${{background:CAL_COLORS.private}}></i> Privat</span>
-        <span><i style=${{background:'var(--accent)'}}></i> Fra systemet</span>
-      </div>
+      ${(legend.cals.length || legend.cats.length) ? html`
+        <div className="legend">
+          ${legend.cals.map(k=>html`<${CTag} key=${k} color=${CAL_COLORS[k]} label=${CAL_LABEL[k]}/>`)}
+          ${legend.cats.map(c=>html`<${CTag} key=${c.id} color=${c.color} label=${c.name}/>`)}
+        </div>` : null}
 
       <div className="grouphdr">${selLabel.charAt(0).toUpperCase()+selLabel.slice(1)}</div>
       ${empty ? html`<${Empty} text="Ingenting i kalenderen denne dag."/>` : null}
-      ${[...allDayE, ...timedE].map(e=>html`
-        <button key=${e.id} className="item-row" onClick=${()=>api.startEditEvent(e)}>
-          <span className="stripe" style=${{background:CAL_COLORS[e.calendar]}}></span>
-          <span style=${{width:'8px'}}></span>
-          <div className="row-body">
-            <div className="row-title">${e.title}</div>
-            <div className="row-meta">
-              <span className="evt-time">${e.start ? fmtTime(e.start)+(e.end?'–'+fmtTime(e.end):'') : 'Hele dagen'}</span>
-              <span>${CAL_LABEL[e.calendar]}</span>
-              ${e.source==='ics' ? html`<span>Importeret</span>` : null}
+      <div className="cal-list">
+        ${[...allDayE, ...timedE].map(e=>html`
+          <button key=${e.id} className="item-row" onClick=${()=>api.startEditEvent(e)}>
+            <span className="stripe" style=${{background:CAL_COLORS[e.calendar]}}></span>
+            <span style=${{width:'8px'}}></span>
+            <div className="row-body">
+              <div className="row-title">${e.title}</div>
+              <div className="row-meta">
+                <${CTag} color=${CAL_COLORS[e.calendar]} label=${CAL_LABEL[e.calendar]}/>
+                <span className="evt-time">${e.start ? fmtTime(e.start)+(e.end?'–'+fmtTime(e.end):'') : 'Hele dagen'}</span>
+                ${e.source==='ics' ? html`<span>Importeret</span>` : null}
+              </div>
+              ${e.note ? html`<div className="row-snippet">${e.note}</div>` : null}
             </div>
-            ${e.note ? html`<div className="row-snippet">${e.note}</div>` : null}
-          </div>
-          <span className="row-chev"><${Icon.chevron}/></span>
-        </button>`)}
-      ${appItems.map(({kind,item})=>{
-        const c = catById[item.categoryId];
-        return html`<${PlainRow} key=${item.id+kind} item=${item} category=${c} onOpen=${onOpenItem}
-          badge=${html`<span className="badge">${kindLabel[kind]}</span>`}
-          meta=${[html`<span key="t">${TYPE_LABEL[item.type]}</span>`, c?html`<span key="c">${c.name}</span>`:null]}/>`;
-      })}
+            <span className="row-chev"><${Icon.chevron}/></span>
+          </button>`)}
+        ${appItems.map(({kind,item})=>{
+          const c = catById[item.categoryId];
+          return html`<${PlainRow} key=${item.id+kind} item=${item} category=${c} onOpen=${onOpenItem}
+            badge=${html`<span className="badge">${kindLabel[kind]}</span>`}
+            meta=${[
+              c?html`<${CTag} key="c" color=${c.color} label=${c.name}/>`:null,
+              html`<span key="t">${TYPE_LABEL[item.type]}</span>`
+            ]}/>`;
+        })}
+      </div>
 
       <div className="fabwrap">
         <button className="btn btn-primary" onClick=${()=>api.startEvent(selected)}>
