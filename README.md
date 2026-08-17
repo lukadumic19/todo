@@ -34,6 +34,12 @@ pædagogisk mellemleder på Havana.
   i kalenderen.
 - **Personalisering**: lyst/mørkt/automatisk tema, seks accentfarver og
   valgfrit navn til hilsenen.
+- **Søgning** på tværs af alt: titler og indhold i opgaver, idéer, beslutninger,
+  aftaler, noter, standarder og kalenderbegivenheder. Træf markeres i teksten,
+  resultaterne kan filtreres på type, og afsluttede opgaver og udgåede
+  standarder er med — det er hele pointen med en arbejdshukommelse.
+  Søgningen er ufølsom over for store bogstaver og accenter, og ø/æ/å kan
+  skrives som o/a (fx finder "mode" også "møde").
 - **Migration**: v1-data konverteres automatisk ved første åbning; den rå
   v1-JSON gemmes urørt under localStorage-nøglen `lukas-todo-v1-backup`.
   Gamle v1-backupfiler kan stadig importeres.

@@ -93,7 +93,7 @@ input,textarea,select{font:inherit;color:inherit}
   background:linear-gradient(140deg, color-mix(in srgb, var(--accent) 14%, var(--card)) 0%, var(--card) 62%);
   padding:18px 16px 14px;margin-bottom:18px;
 }
-.hero .gearbtn{position:absolute;top:6px;right:6px}
+.hero-actions{position:absolute;top:6px;right:6px;display:flex}
 .hero-greet{font-size:24px;font-weight:600;letter-spacing:-0.01em;line-height:1.2;padding-right:44px;overflow-wrap:break-word}
 .hero-datetime{font-size:14px;color:var(--muted);margin-top:4px;font-variant-numeric:tabular-nums}
 .hero-weather{display:flex;align-items:center;gap:12px;margin-top:16px}
@@ -113,6 +113,28 @@ input,textarea,select{font:inherit;color:inherit}
   border-top:1px solid color-mix(in srgb, var(--accent) 12%, var(--line2));
   font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;line-height:1.4;
 }
+
+/* ---------- Søgning ---------- */
+.searchbar{
+  display:flex;align-items:center;gap:10px;
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:0 12px;margin-bottom:12px;
+}
+.searchbar:focus-within{border-color:var(--accent)}
+.searchbar > svg{color:var(--muted);flex:none}
+.searchbar input{flex:1;border:none;background:none;padding:13px 0;font-size:16px;min-width:0;-webkit-appearance:none;appearance:none}
+.searchbar input::-webkit-search-cancel-button,
+.searchbar input::-webkit-search-decoration{-webkit-appearance:none;display:none}
+.searchbar .clearbtn{
+  width:40px;height:40px;display:flex;align-items:center;justify-content:center;
+  color:var(--muted);flex:none;margin-right:-10px;
+}
+mark{
+  background:color-mix(in srgb, var(--accent) 26%, transparent);
+  color:inherit;border-radius:3px;padding:0 1px;
+}
+.res-count{font-size:13px;color:var(--muted);margin:2px 2px 12px}
+.search-hint{padding:44px 24px;text-align:center;color:var(--muted);font-size:15px;line-height:1.55}
 
 /* ---------- Kalender ---------- */
 .cal-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:10px 8px 12px;margin-bottom:12px}
@@ -581,6 +603,8 @@ const Icon = {
   bell: () => html`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 1 0-12 0c0 7-2.5 8.5-2.5 8.5h17S18 15 18 8"/><path d="M10 21a2.3 2.3 0 0 0 4 0"/></svg>`,
   up: () => html`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="6 14.5 12 8.5 18 14.5"/></svg>`,
   down: () => html`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="6 9.5 12 15.5 18 9.5"/></svg>`,
+  search: () => html`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><line x1="15.5" y1="15.5" x2="20.5" y2="20.5"/></svg>`,
+  x: () => html`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>`,
   suncloud: () => html`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="8" cy="8.5" r="3.2"/><line x1="8" y1="2.5" x2="8" y2="4"/><line x1="2" y1="8.5" x2="3.5" y2="8.5"/><line x1="3.7" y1="4.2" x2="4.8" y2="5.3"/><path d="M10 19.5h7.5a3 3 0 0 0 .6-5.94 4.3 4.3 0 0 0-8.35-1.1A3.5 3.5 0 0 0 10 19.5z"/></svg>`,
   cloud: () => html`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M7 18.5h10a4 4 0 0 0 .8-7.92 5.5 5.5 0 0 0-10.68-1.4A4.5 4.5 0 0 0 7 18.5z"/></svg>`,
   fog: () => html`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M7 13.5h10a4 4 0 0 0 .8-7.92A5.5 5.5 0 0 0 7.12 4.7 4.5 4.5 0 0 0 7 13.5z"/><line x1="5" y1="17" x2="19" y2="17"/><line x1="7" y1="20.5" x2="17" y2="20.5"/></svg>`,
@@ -700,6 +724,121 @@ function useWeather(enabled){
 }
 
 const WICONS = {sun:Icon.sun, suncloud:Icon.suncloud, cloud:Icon.cloud, fog:Icon.fog, rain:Icon.rain, snow:Icon.snow, thunder:Icon.thunder};
+
+/* ================= Søgning ================= */
+
+/* Gør tekst sammenlignelig: små bogstaver, uden accenter og med ø/æ skrevet
+   som o/a, så "undersoger" også finder "undersøger" og "faelles" finder "fælles".
+   Hvert tegn erstattes 1:1, så træf stadig kan markeres præcist. */
+function fold(s){
+  return String(s==null?'':s).toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/\u00f8/g,'o').replace(/\u00e6/g,'a');
+}
+
+/* De tekstfelter der søges i, pr. type */
+function searchableFields(x){
+  if(x.kind==='event') return [x.obj.note];
+  const i = x.obj;
+  const fu = (i.followUp && i.followUp.note) || '';
+  if(i.type==='task') return [i.description, i.waitingFor, fu];
+  if(i.type==='decision') return [i.what, i.rationale, i.involved, i.notes, fu];
+  if(i.type==='agreement') return [i.what, i.withWhom, fu];
+  if(i.type==='note') return [i.text];
+  if(i.type==='standard') return STD_FIELDS.map(([k])=>(i.fields||{})[k]).concat([fu]);
+  return [fu];
+}
+
+function snippetAround(text, terms){
+  const f = fold(text);
+  let at = -1;
+  for(const t of terms){ const i = f.indexOf(t); if(i>=0 && (at<0 || i<at)) at = i; }
+  if(at<0) return String(text).slice(0,120);
+  const from = Math.max(0, at-40);
+  const to = Math.min(text.length, at+90);
+  return (from>0?'… ':'') + String(text).slice(from,to).trim() + (to<text.length?' …':'');
+}
+
+function searchAll(data, query, typeFilter){
+  const terms = fold(query).split(/\s+/).filter(Boolean);
+  if(!terms.length) return [];
+  const candidates = [];
+  for(const i of data.items){
+    const kind = (i.type==='task' && i.idea) ? 'idea' : i.type;
+    candidates.push({kind, obj:i, id:i.id});
+  }
+  for(const e of (data.events||[])) candidates.push({kind:'event', obj:e, id:e.id});
+
+  const results = [];
+  for(const c of candidates){
+    if(typeFilter!=='all' && typeFilter!==c.kind) continue;
+    const title = c.obj.title || '';
+    const ftitle = fold(title);
+    const fields = searchableFields(c).filter(Boolean);
+    const fbody = fold(fields.join('  '));
+    /* alle ord skal findes — i titlen eller i teksten */
+    let ok = true, inTitle = 0;
+    for(const t of terms){
+      const a = ftitle.includes(t), b = fbody.includes(t);
+      if(!a && !b){ ok = false; break; }
+      if(a) inTitle++;
+    }
+    if(!ok) continue;
+    const bodyHit = fields.find(f=>terms.some(t=>fold(f).includes(t)));
+    results.push({
+      ...c,
+      title,
+      snippet: (inTitle===terms.length && !bodyHit) ? '' : (bodyHit ? snippetAround(bodyHit, terms) : ''),
+      score: inTitle===terms.length ? 0 : (inTitle>0 ? 1 : 2),
+      date: resultDate(c)
+    });
+  }
+  results.sort((a,b)=> (a.score-b.score) || String(b.date||'').localeCompare(String(a.date||'')));
+  return results;
+}
+
+function resultDate(c){
+  const o = c.obj;
+  if(c.kind==='event') return o.date;
+  if(o.type==='decision') return o.decidedOn;
+  if(o.type==='agreement') return o.agreedOn;
+  if(o.type==='note') return o.noteDate;
+  if(o.type==='standard') return String(o.updatedAt||'').slice(0,10);
+  if(o.type==='task'){
+    if(o.deadline) return o.deadline;
+    if(o.completedAt) return String(o.completedAt).slice(0,10);
+  }
+  return String(o.createdAt||'').slice(0,10);
+}
+
+/* Markerer de søgte ord i en tekst */
+function Highlight({text, terms}){
+  const s = String(text==null?'':text);
+  if(!s || !terms || !terms.length) return s;
+  const f = fold(s);
+  const ranges = [];
+  for(const t of terms){
+    let i = f.indexOf(t);
+    while(i>=0){ ranges.push([i, i+t.length]); i = f.indexOf(t, i+t.length); }
+  }
+  if(!ranges.length) return s;
+  ranges.sort((a,b)=>a[0]-b[0]);
+  const merged = [ranges[0]];
+  for(const r of ranges.slice(1)){
+    const last = merged[merged.length-1];
+    if(r[0]<=last[1]) last[1] = Math.max(last[1], r[1]);
+    else merged.push(r);
+  }
+  const out = [];
+  let pos = 0;
+  merged.forEach(([a,b],idx)=>{
+    if(a>pos) out.push(s.slice(pos,a));
+    out.push(html`<mark key=${idx}>${s.slice(a,b)}</mark>`);
+    pos = b;
+  });
+  if(pos<s.length) out.push(s.slice(pos));
+  return out;
+}
 
 /* ================= Kalender-hjælpere og ICS-import ================= */
 
@@ -919,7 +1058,7 @@ function PlainRow({item, category, showCategory, onOpen, snippet, meta, badge}){
 
 /* ================= Skærme ================= */
 
-function TodayScreen({data, settings, api, onOpenItem, onOpenSettings}){
+function TodayScreen({data, settings, api, onOpenItem, onOpenSettings, onSearch}){
   const cats = Object.fromEntries(data.categories.map(c=>[c.id,c]));
   const today = todayStr();
   const active = data.items.filter(i=>i.type==='task' && !i.idea && i.status!=='done');
@@ -984,7 +1123,10 @@ function TodayScreen({data, settings, api, onOpenItem, onOpenSettings}){
   return html`
     <div className="screen">
       <div className="hero">
-        <button className="iconbtn gearbtn" aria-label="Indstillinger" onClick=${onOpenSettings}><${Icon.gear}/></button>
+        <div className="hero-actions">
+          <button className="iconbtn" aria-label="Søg" onClick=${onSearch}><${Icon.search}/></button>
+          <button className="iconbtn" aria-label="Indstillinger" onClick=${onOpenSettings}><${Icon.gear}/></button>
+        </div>
         <h1 className="hero-greet">${settings.name ? greet+', '+settings.name : greet}</h1>
         <div className="hero-datetime">${dateStr.charAt(0).toUpperCase()+dateStr.slice(1)} · kl. ${timeStr}</div>
         ${weatherEl}
@@ -1020,7 +1162,7 @@ function TodayScreen({data, settings, api, onOpenItem, onOpenSettings}){
     </div>`;
 }
 
-function CategoriesScreen({data, onOpenCategory, onOpenSettings}){
+function CategoriesScreen({data, onOpenCategory, onOpenSettings, onSearch}){
   const cats = [...data.categories].sort((a,b)=>a.order-b.order);
   const counts = {};
   for(const i of data.items){
@@ -1030,6 +1172,7 @@ function CategoriesScreen({data, onOpenCategory, onOpenSettings}){
     <div className="screen">
       <div className="hdr">
         <h1>Kategorier</h1>
+        <button className="iconbtn" aria-label="Søg" onClick=${onSearch}><${Icon.search}/></button>
         <button className="iconbtn" aria-label="Indstillinger" onClick=${onOpenSettings}><${Icon.gear}/></button>
       </div>
       ${cats.map(c=>{
@@ -1137,7 +1280,7 @@ function CategoryScreen({data, categoryId, section, onSection, onBack, onOpenIte
     </div>`;
 }
 
-function DecisionsScreen({data, filter, onFilter, onOpenItem}){
+function DecisionsScreen({data, filter, onFilter, onOpenItem, onSearch}){
   const cats = [...data.categories].sort((a,b)=>a.order-b.order);
   const catById = Object.fromEntries(cats.map(c=>[c.id,c]));
   const decided = data.items
@@ -1146,7 +1289,10 @@ function DecisionsScreen({data, filter, onFilter, onOpenItem}){
     .sort(byDesc('decidedOn'));
   return html`
     <div className="screen">
-      <div className="hdr"><h1>Beslutninger</h1></div>
+      <div className="hdr">
+        <h1>Beslutninger</h1>
+        <button className="iconbtn" aria-label="Søg" onClick=${onSearch}><${Icon.search}/></button>
+      </div>
       <div className="chiprow">
         <button className=${'chip'+(!filter?' active':'')} onClick=${()=>onFilter(null)}>Alle</button>
         ${cats.map(c=>html`
@@ -1165,7 +1311,7 @@ function DecisionsScreen({data, filter, onFilter, onOpenItem}){
     </div>`;
 }
 
-function StandardsScreen({data, filter, onFilter, statusFilter, onStatusFilter, onOpenItem}){
+function StandardsScreen({data, filter, onFilter, statusFilter, onStatusFilter, onOpenItem, onSearch}){
   const cats = [...data.categories].sort((a,b)=>a.order-b.order);
   const catById = Object.fromEntries(cats.map(c=>[c.id,c]));
   const stdOrder = {active:0, draft:1, retired:2};
@@ -1176,7 +1322,10 @@ function StandardsScreen({data, filter, onFilter, statusFilter, onStatusFilter, 
     .sort((a,b)=>(stdOrder[a.status]-stdOrder[b.status]) || String(b.updatedAt||'').localeCompare(String(a.updatedAt||'')));
   return html`
     <div className="screen">
-      <div className="hdr"><h1>Standarder</h1></div>
+      <div className="hdr">
+        <h1>Standarder</h1>
+        <button className="iconbtn" aria-label="Søg" onClick=${onSearch}><${Icon.search}/></button>
+      </div>
       <div className="chiprow">
         ${[['all','Alle'],['active','Gældende'],['draft','Kladder'],['retired','Udgåede']].map(([k,label])=>html`
           <button key=${k} className=${'chip'+(statusFilter===k?' active':'')} onClick=${()=>onStatusFilter(k)}>${label}</button>`)}
@@ -1199,14 +1348,115 @@ function StandardsScreen({data, filter, onFilter, statusFilter, onStatusFilter, 
     </div>`;
 }
 
+/* ---------- Søgning ---------- */
+
+const SEARCH_TYPES = [
+  ['all','Alle'], ['task','Opgaver'], ['decision','Beslutninger'], ['agreement','Aftaler'],
+  ['note','Noter'], ['standard','Standarder'], ['idea','Idéer'], ['event','Begivenheder']
+];
+const KIND_LABEL = {task:'Opgave', decision:'Beslutning', agreement:'Aftale', note:'Note', standard:'Standard', idea:'Idé', event:'Begivenhed'};
+
+function SearchScreen({data, query, onQuery, typeFilter, onTypeFilter, onBack, onOpenResult}){
+  const catById = Object.fromEntries(data.categories.map(c=>[c.id,c]));
+  const terms = fold(query).split(/\s+/).filter(Boolean);
+  const results = useMemo(()=>searchAll(data, query, typeFilter), [data, query, typeFilter]);
+  const counts = useMemo(()=>{
+    const all = searchAll(data, query, 'all');
+    const m = {all: all.length};
+    for(const r of all) m[r.kind] = (m[r.kind]||0)+1;
+    return m;
+  },[data, query]);
+
+  const inputRef = useRef(null);
+  useEffect(()=>{ if(inputRef.current) inputRef.current.focus(); },[]);
+
+  const statusBadge = (r)=>{
+    const o = r.obj;
+    if(r.kind==='task' && o.status==='done') return 'Færdig';
+    if(r.kind==='task' && o.status!=='not_started') return TASK_STATUS[o.status];
+    if(r.kind==='standard') return STD_STATUS[o.status];
+    return null;
+  };
+
+  return html`
+    <div className="screen">
+      <div className="hdr">
+        <button className="iconbtn backbtn" aria-label="Tilbage" onClick=${onBack}><${Icon.back}/></button>
+        <h1>Søg</h1>
+      </div>
+
+      <div className="searchbar">
+        <${Icon.search}/>
+        <input ref=${inputRef} value=${query} type="search" enterKeyHint="search"
+               aria-label="Søg i alt du har registreret"
+               placeholder="Søg i alt du har registreret"
+               onInput=${(e)=>onQuery(e.target.value)}/>
+        ${query ? html`
+          <button className="clearbtn" aria-label="Ryd søgning" onClick=${()=>onQuery('')}><${Icon.x}/></button>
+        ` : null}
+      </div>
+
+      ${query.trim() ? html`
+        <div className="chiprow">
+          ${SEARCH_TYPES.filter(([k])=>k==='all' || counts[k]).map(([k,label])=>html`
+            <button key=${k} className=${'chip'+(typeFilter===k?' active':'')} onClick=${()=>onTypeFilter(k)}>
+              ${label}${counts[k]?html` <span className="n">${counts[k]}</span>`:null}
+            </button>`)}
+        </div>` : null}
+
+      ${!query.trim() ? html`
+        <div className="search-hint">
+          Søg på tværs af opgaver, beslutninger, aftaler, noter, standarder og kalenderen.<br/>
+          Flere ord indsnævrer søgningen.
+        </div>` : null}
+
+      ${query.trim() && results.length===0 ? html`
+        <${Empty} text=${'Ingen resultater for "'+query.trim()+'".'}/>` : null}
+
+      ${results.length ? html`
+        <p className="res-count">${results.length} ${results.length===1?'resultat':'resultater'}</p>` : null}
+
+      <div className="cal-list">
+        ${results.map(r=>{
+          const c = r.kind==='event' ? null : catById[r.obj.categoryId];
+          const badge = statusBadge(r);
+          return html`
+            <button key=${r.kind+r.id} className="item-row" onClick=${()=>onOpenResult(r)}>
+              <span className="stripe" style=${{background: r.kind==='event' ? CAL_COLORS[r.obj.calendar] : (c?c.color:'transparent')}}></span>
+              <span style=${{width:'8px'}}></span>
+              <div className="row-body">
+                <div className="row-title">
+                  <${Highlight} text=${r.title} terms=${terms}/>
+                  ${' '}<span className="badge">${KIND_LABEL[r.kind]}</span>
+                </div>
+                ${r.snippet ? html`
+                  <div className="row-snippet"><${Highlight} text=${r.snippet} terms=${terms}/></div>` : null}
+                <div className="row-meta">
+                  ${c ? html`<${CTag} color=${c.color} label=${c.name}/>` : null}
+                  ${r.kind==='event' ? html`<${CTag} color=${CAL_COLORS[r.obj.calendar]} label=${CAL_LABEL[r.obj.calendar]}/>` : null}
+                  ${r.date ? html`<span>${fmtDay(r.date)}</span>` : null}
+                  ${badge ? html`<span>${badge}</span>` : null}
+                </div>
+              </div>
+              <span className="row-chev"><${Icon.chevron}/></span>
+            </button>`;
+        })}
+      </div>
+    </div>`;
+}
+
 /* ---------- Kalender ---------- */
 
 const MONTHS_DA = ['januar','februar','marts','april','maj','juni','juli','august','september','oktober','november','december'];
 
-function CalendarScreen({data, onOpenItem, api}){
+function CalendarScreen({data, initialDate, onOpenItem, api, onSearch}){
   const today = todayStr();
-  const [selected,setSelected] = useState(today);
-  const [ym,setYm] = useState(()=>({y:new Date().getFullYear(), m:new Date().getMonth()}));
+  const startAt = initialDate || today;
+  const [selected,setSelected] = useState(startAt);
+  const [ym,setYm] = useState(()=>{
+    const p = startAt.split('-');
+    return {y:+p[0], m:+p[1]-1};
+  });
 
   const catById = Object.fromEntries(data.categories.map(c=>[c.id,c]));
 
@@ -1276,6 +1526,7 @@ function CalendarScreen({data, onOpenItem, api}){
     <div className="screen has-fab">
       <div className="hdr">
         <h1>Kalender</h1>
+        <button className="iconbtn" aria-label="Søg" onClick=${onSearch}><${Icon.search}/></button>
         <button className="iconbtn" aria-label="Importér kalender" onClick=${api.startCalImport}><${Icon.doc}/></button>
       </div>
       <div className="cal-card">
@@ -1951,6 +2202,8 @@ function App(){
   const [stdFilter,setStdFilter] = useState(null);
   const [stdStatusFilter,setStdStatusFilter] = useState('all');
   const [catSection,setCatSection] = useState('tasks');
+  const [searchQuery,setSearchQuery] = useState('');
+  const [searchType,setSearchType] = useState('all');
 
   useEffect(()=>persist(data),[data]);
 
@@ -1982,6 +2235,11 @@ function App(){
 
   const openItem = (item)=>push({name:'item', id:item.id});
   const openCategory = (id)=>{ setCatSection('tasks'); push({name:'category', id}); };
+  const openSearch = ()=>push({name:'search'});
+  const openResult = (r)=>{
+    if(r.kind==='event') push({name:'calendar', date:r.obj.date});
+    else push({name:'item', id:r.id});
+  };
 
   /* ---- API til skærme og ark ---- */
   const api = {
@@ -2126,18 +2384,23 @@ function App(){
   }else if(view.name==='item'){
     screen = html`<${ItemScreen} data=${data} itemId=${view.id} onBack=${pop} onOpenItem=${openItem} api=${api}/>`;
   }else if(view.name==='categories'){
-    screen = html`<${CategoriesScreen} data=${data} onOpenCategory=${openCategory} onOpenSettings=${()=>push({name:'settings'})}/>`;
+    screen = html`<${CategoriesScreen} data=${data} onOpenCategory=${openCategory} onOpenSettings=${()=>push({name:'settings'})} onSearch=${openSearch}/>`;
   }else if(view.name==='calendar'){
-    screen = html`<${CalendarScreen} data=${data} onOpenItem=${openItem} api=${api}/>`;
+    screen = html`<${CalendarScreen} data=${data} initialDate=${view.date} onOpenItem=${openItem} api=${api} onSearch=${openSearch}/>`;
+  }else if(view.name==='search'){
+    screen = html`<${SearchScreen} data=${data} query=${searchQuery} onQuery=${setSearchQuery}
+      typeFilter=${searchType} onTypeFilter=${setSearchType} onBack=${pop} onOpenResult=${openResult}/>`;
   }else if(view.name==='decisions'){
-    screen = html`<${DecisionsScreen} data=${data} filter=${decFilter} onFilter=${setDecFilter} onOpenItem=${openItem}/>`;
+    screen = html`<${DecisionsScreen} data=${data} filter=${decFilter} onFilter=${setDecFilter}
+      onOpenItem=${openItem} onSearch=${openSearch}/>`;
   }else if(view.name==='standards'){
     screen = html`<${StandardsScreen} data=${data} filter=${stdFilter} onFilter=${setStdFilter}
-      statusFilter=${stdStatusFilter} onStatusFilter=${setStdStatusFilter} onOpenItem=${openItem}/>`;
+      statusFilter=${stdStatusFilter} onStatusFilter=${setStdStatusFilter} onOpenItem=${openItem} onSearch=${openSearch}/>`;
   }else if(view.name==='settings'){
     screen = html`<${SettingsScreen} data=${data} settings=${settings} isDark=${isDark} onBack=${pop} api=${api}/>`;
   }else{
-    screen = html`<${TodayScreen} data=${data} settings=${settings} api=${api} onOpenItem=${openItem} onOpenSettings=${()=>push({name:'settings'})}/>`;
+    screen = html`<${TodayScreen} data=${data} settings=${settings} api=${api} onOpenItem=${openItem}
+      onOpenSettings=${()=>push({name:'settings'})} onSearch=${openSearch}/>`;
   }
 
   /* ---- Ark ---- */
