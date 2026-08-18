@@ -13,7 +13,7 @@
 <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html{height:100%}
+html{height:100%;overscroll-behavior-x:none;overflow-x:hidden}
 body{
   min-height:100%;
   font-family:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,"Helvetica Neue",sans-serif;
@@ -22,6 +22,8 @@ body{
   -webkit-font-smoothing:antialiased;
   text-size-adjust:100%;
   -webkit-text-size-adjust:100%;
+  overscroll-behavior-x:none;
+  overflow-x:hidden;
 }
 :root{
   --bg:#EEF1EE;
@@ -67,6 +69,8 @@ input,textarea,select{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
 
 #root{min-height:100vh}
+/* Beholder for skærmen, så den kan trækkes til siden ved tilbage-strøg */
+.swipe-wrap{min-height:100vh;background:var(--bg)}
 .screen{
   max-width:560px;
   margin:0 auto;
@@ -2192,6 +2196,94 @@ function VersionSheet({version, onClose}){
     <//>`;
 }
 
+/* ================= Tilbage-strøg ================= */
+
+/* Trækker skærmen til højre, når man stryger ind fra venstre kant — som i iOS.
+   Kanten er gjort bred nok til at kunne rammes med tommelfingeren i normal
+   grebshøjde, så man slipper for at nå op i hjørnet. Pilen findes stadig. */
+function useSwipeBack(enabled, onBack){
+  const ref = useRef(null);
+  const cb = useRef(onBack);
+  cb.current = onBack;
+  const on = useRef(enabled);
+  on.current = enabled;
+
+  useEffect(()=>{
+    const el = ref.current;
+    if(!el) return;
+    const EDGE = 36;      /* hvor langt inde fra kanten strøget må begynde */
+    const ENGAGE = 12;    /* hvornår vi er sikre på at det er et vandret strøg */
+    const reduced = reducedMotion();
+    const s = {active:false, engaged:false, x0:0, y0:0, dx:0};
+
+    const paint = (x, anim)=>{
+      el.style.transition = anim ? 'transform .22s ease-out' : '';
+      el.style.transform = x ? 'translateX('+x+'px)' : '';
+      el.style.boxShadow = x ? '-16px 0 32px rgba(16,22,20,0.20)' : '';
+    };
+    const reset = ()=>{
+      s.active = false; s.engaged = false; s.dx = 0;
+      el.style.transition = ''; el.style.transform = ''; el.style.boxShadow = '';
+    };
+
+    const onStart = (e)=>{
+      if(!on.current || e.touches.length!==1) return;
+      const t = e.touches[0];
+      if(t.clientX > EDGE) return;
+      s.active = true; s.engaged = false; s.dx = 0;
+      s.x0 = t.clientX; s.y0 = t.clientY;
+      el.style.transition = '';
+    };
+    const onMove = (e)=>{
+      if(!s.active) return;
+      const t = e.touches[0];
+      const dx = t.clientX - s.x0, dy = t.clientY - s.y0;
+      if(!s.engaged){
+        /* lodret bevægelse vinder — lad siden scrolle i fred */
+        if(Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > ENGAGE){ s.active = false; return; }
+        if(dx < ENGAGE) return;
+        s.engaged = true;
+      }
+      if(e.cancelable) e.preventDefault();
+      s.dx = Math.max(0, dx);
+      if(!reduced) paint(s.dx, false);
+    };
+    const onEnd = ()=>{
+      if(!s.active) return;
+      const dx = s.dx, engaged = s.engaged;
+      s.active = false; s.engaged = false; s.dx = 0;
+      if(!engaged){ reset(); return; }
+      const w = window.innerWidth || 390;
+      const far = dx > Math.min(120, w*0.3);
+      if(reduced){
+        reset();
+        if(far) cb.current();
+        return;
+      }
+      if(far){
+        paint(w, true);
+        setTimeout(()=>{ cb.current(); reset(); }, 200);
+      }else{
+        paint(0, true);
+        setTimeout(()=>{ el.style.transition = ''; el.style.boxShadow = ''; }, 240);
+      }
+    };
+
+    el.addEventListener('touchstart', onStart, {passive:true});
+    el.addEventListener('touchmove', onMove, {passive:false});
+    el.addEventListener('touchend', onEnd);
+    el.addEventListener('touchcancel', reset);
+    return ()=>{
+      el.removeEventListener('touchstart', onStart);
+      el.removeEventListener('touchmove', onMove);
+      el.removeEventListener('touchend', onEnd);
+      el.removeEventListener('touchcancel', reset);
+    };
+  },[]);
+
+  return ref;
+}
+
 /* ================= App ================= */
 
 function App(){
@@ -2229,7 +2321,46 @@ function App(){
   const view = stack[stack.length-1];
   const push = (v)=>setStack(s=>[...s,v]);
   const pop = ()=>setStack(s=>s.length>1?s.slice(0,-1):s);
+
+  /* Navigationen hænger på browserens historik, så telefonens eget
+     tilbage-strøg (og Androids tilbageknap) rammer samme sted som pilen.
+     Der holdes altid ét ekstra historik-trin i baghånden, som forbruges
+     ved et tilbage-skridt og lægges på plads igen bagefter. */
+  const stackRef = useRef(stack);
+  stackRef.current = stack;
+  const lastPop = useRef(0);
+
+  useEffect(()=>{
+    const standalone = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches)
+      || navigator.standalone === true;
+    const rearm = ()=>{ try{ history.pushState({guard:1},''); }catch(e){} };
+    const onPop = ()=>{
+      if(stackRef.current.length>1){
+        lastPop.current = Date.now();
+        setStack(s=>s.length>1?s.slice(0,-1):s);
+        rearm();
+      }else if(standalone){
+        /* på hjemmeskærmen: undgå at appen forlades ved et uheld fra forsiden */
+        rearm();
+      }
+    };
+    rearm();
+    window.addEventListener('popstate', onPop);
+    return ()=>window.removeEventListener('popstate', onPop);
+  },[]);
+
+  /* fromGesture: springes over, hvis systemet lige selv har navigeret tilbage,
+     så et strøg ikke tæller dobbelt */
+  const goBack = (fromGesture)=>{
+    if(stackRef.current.length<=1) return;
+    if(fromGesture && Date.now()-lastPop.current < 500) return;
+    try{ history.back(); }
+    catch(e){ setStack(s=>s.length>1?s.slice(0,-1):s); }
+  };
   const resetTo = (name)=>setStack([{name}]);
+
+  /* Stryg ind fra venstre kant for at gå tilbage — slået fra når et ark er åbent */
+  const swipeRef = useSwipeBack(stack.length>1 && !sheet, ()=>goBack(true));
 
   const patchItem = (id,patch)=>setData(d=>({...d, items:d.items.map(i=>i.id===id?{...i,...patch, updatedAt:nowIso()}:i)}));
 
@@ -2380,16 +2511,16 @@ function App(){
   let screen = null;
   if(view.name==='category'){
     screen = html`<${CategoryScreen} data=${data} categoryId=${view.id} section=${catSection}
-      onSection=${setCatSection} onBack=${pop} onOpenItem=${openItem} api=${api}/>`;
+      onSection=${setCatSection} onBack=${()=>goBack()} onOpenItem=${openItem} api=${api}/>`;
   }else if(view.name==='item'){
-    screen = html`<${ItemScreen} data=${data} itemId=${view.id} onBack=${pop} onOpenItem=${openItem} api=${api}/>`;
+    screen = html`<${ItemScreen} data=${data} itemId=${view.id} onBack=${()=>goBack()} onOpenItem=${openItem} api=${api}/>`;
   }else if(view.name==='categories'){
     screen = html`<${CategoriesScreen} data=${data} onOpenCategory=${openCategory} onOpenSettings=${()=>push({name:'settings'})} onSearch=${openSearch}/>`;
   }else if(view.name==='calendar'){
     screen = html`<${CalendarScreen} data=${data} initialDate=${view.date} onOpenItem=${openItem} api=${api} onSearch=${openSearch}/>`;
   }else if(view.name==='search'){
     screen = html`<${SearchScreen} data=${data} query=${searchQuery} onQuery=${setSearchQuery}
-      typeFilter=${searchType} onTypeFilter=${setSearchType} onBack=${pop} onOpenResult=${openResult}/>`;
+      typeFilter=${searchType} onTypeFilter=${setSearchType} onBack=${()=>goBack()} onOpenResult=${openResult}/>`;
   }else if(view.name==='decisions'){
     screen = html`<${DecisionsScreen} data=${data} filter=${decFilter} onFilter=${setDecFilter}
       onOpenItem=${openItem} onSearch=${openSearch}/>`;
@@ -2397,7 +2528,7 @@ function App(){
     screen = html`<${StandardsScreen} data=${data} filter=${stdFilter} onFilter=${setStdFilter}
       statusFilter=${stdStatusFilter} onStatusFilter=${setStdStatusFilter} onOpenItem=${openItem} onSearch=${openSearch}/>`;
   }else if(view.name==='settings'){
-    screen = html`<${SettingsScreen} data=${data} settings=${settings} isDark=${isDark} onBack=${pop} api=${api}/>`;
+    screen = html`<${SettingsScreen} data=${data} settings=${settings} isDark=${isDark} onBack=${()=>goBack()} api=${api}/>`;
   }else{
     screen = html`<${TodayScreen} data=${data} settings=${settings} api=${api} onOpenItem=${openItem}
       onOpenSettings=${()=>push({name:'settings'})} onSearch=${openSearch}/>`;
@@ -2481,7 +2612,7 @@ function App(){
             relations: d.relations.filter(r=>r.fromId!==delId && r.toId!==delId)
           }));
           setSheet(null);
-          if(view.name==='item' && view.id===delId) pop();
+          if(view.name==='item' && view.id===delId) goBack();
         }}
         onClose=${close}/>`;
     }else if(sheet.type==='confirmCat'){
@@ -2529,7 +2660,7 @@ function App(){
       </div>
     </nav>`;
 
-  return html`<div>${screen}${nav}${sheetEl}</div>`;
+  return html`<div><div className="swipe-wrap" ref=${swipeRef}>${screen}</div>${nav}${sheetEl}</div>`;
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(html`<${App}/>`);

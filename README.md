@@ -34,6 +34,10 @@ pædagogisk mellemleder på Havana.
   i kalenderen.
 - **Personalisering**: lyst/mørkt/automatisk tema, seks accentfarver og
   valgfrit navn til hilsenen.
+- **Tilbage med et strøg**: stryg ind fra venstre kant for at gå et niveau
+  tilbage — kanten er bred nok til at rammes i tommelfingerhøjde, og pilen
+  øverst virker fortsat. Navigationen hænger på browserens historik, så
+  telefonens eget tilbage-strøg og Androids tilbageknap rammer samme sted.
 - **Søgning** på tværs af alt: titler og indhold i opgaver, idéer, beslutninger,
   aftaler, noter, standarder og kalenderbegivenheder. Træf markeres i teksten,
   resultaterne kan filtreres på type, og afsluttede opgaver og udgåede
