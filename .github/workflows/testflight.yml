@@ -1,0 +1,60 @@
+name: TestFlight
+
+# Bygger og sender appen til TestFlight, hver gang der pushes til main.
+# Kan også startes manuelt under fanen "Actions" på GitHub.
+on:
+  push:
+    branches: [main]
+    paths-ignore: ['**.md']
+  workflow_dispatch:
+
+concurrency:
+  group: testflight
+  cancel-in-progress: false
+
+jobs:
+  ios:
+    runs-on: macos-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Installér afhængigheder
+        run: npm ci
+
+      - name: Byg webdelen og kopiér ind i iOS-projektet
+        run: npm run ios:sync
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+
+      - name: Læg App Store Connect-nøglen på plads
+        env:
+          ASC_KEY_CONTENT: ${{ secrets.ASC_KEY_CONTENT }}
+        run: printf '%s' "$ASC_KEY_CONTENT" > "$RUNNER_TEMP/AuthKey.p8"
+
+      - name: Byg og upload til TestFlight
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          ASC_KEY_PATH: ${{ runner.temp }}/AuthKey.p8
+        run: bundle exec fastlane ios beta
+
+      - name: Gem byggelog ved fejl
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: byggelog
+          path: ~/Library/Logs/gym

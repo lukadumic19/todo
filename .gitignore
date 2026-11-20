@@ -1,0 +1,6 @@
+node_modules/
+www/
+build/
+fastlane/report.xml
+fastlane/README.md
+*.p8

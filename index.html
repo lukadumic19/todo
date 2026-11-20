@@ -2444,6 +2444,15 @@ function App(){
 
     /* Backup */
     exportData: ()=>{
+      /* I iOS-appen (Capacitor) virker download-links ikke: gem filen og åbn Del-menuen. */
+      const cap = window.Capacitor;
+      if(cap && cap.isNativePlatform && cap.isNativePlatform() && cap.nativePromise){
+        const name = 'opgaver-backup-'+todayStr()+'.json';
+        cap.nativePromise('Filesystem','writeFile',{path:name, data:JSON.stringify(data,null,2), directory:'CACHE', encoding:'utf8'})
+          .then((r)=>cap.nativePromise('Share','share',{title:name, files:[r.uri]}))
+          .catch((e)=>{ const msg = String((e && e.message) || e); if(!/cancel/i.test(msg)) window.alert('Eksporten mislykkedes: '+msg); });
+        return;
+      }
       const blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
