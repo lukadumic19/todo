@@ -21,7 +21,9 @@ platform :ios do
     # Nyt buildnummer: ét højere end det seneste på TestFlight.
     build_number = latest_testflight_build_number(api_key: api_key, initial_build_number: 0) + 1
 
-    # Apple klarer certifikater og profiler selv (cloud signing) via API-nøglen.
+    # Apple klarer certifikat og profil selv (cloud signing) via API-nøglen.
+    # Arkivet bygges usigneret; signeringen sker ved eksport til App Store Connect,
+    # så der kræves hverken lokale certifikater eller registrerede enheder.
     auth = "-allowProvisioningUpdates " \
            "-authenticationKeyPath #{key_path} " \
            "-authenticationKeyID #{key_id} " \
@@ -32,7 +34,7 @@ platform :ios do
       scheme: "App",
       configuration: "Release",
       export_method: "app-store",
-      xcargs: "#{auth} DEVELOPMENT_TEAM=#{team_id} CODE_SIGN_STYLE=Automatic CURRENT_PROJECT_VERSION=#{build_number}",
+      xcargs: "DEVELOPMENT_TEAM=#{team_id} CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CURRENT_PROJECT_VERSION=#{build_number}",
       export_xcargs: auth,
       export_options: { signingStyle: "automatic", teamID: team_id },
       output_directory: "build",
