@@ -6,13 +6,14 @@
   "scripts": {
     "build": "node scripts/build-www.mjs",
     "ios:sync": "npm run build && npx cap sync ios",
-    "ios:assets": "npx capacitor-assets generate --ios --iconBackgroundColor #EEF1EE --splashBackgroundColor #EEF1EE --splashBackgroundColorDark #171B19"
+    "ios:assets": "npx capacitor-assets generate --ios --iconBackgroundColor #F2F0EB --splashBackgroundColor #F2F0EB --splashBackgroundColorDark #121317"
   },
   "dependencies": {
     "@capacitor/core": "^8.6.2",
     "@capacitor/filesystem": "^8.1.5",
     "@capacitor/ios": "^8.6.2",
-    "@capacitor/share": "^8.0.3"
+    "@capacitor/share": "^8.0.3",
+    "@capacitor/status-bar": "^8.0.4"
   },
   "devDependencies": {
     "@capacitor/assets": "^4.0.0",

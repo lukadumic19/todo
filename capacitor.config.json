@@ -2,7 +2,7 @@
   "appId": "dk.lukadumic.arbejde",
   "appName": "Opgaver",
   "webDir": "www",
-  "backgroundColor": "#EEF1EE",
+  "backgroundColor": "#F2F0EB",
   "ios": {
     "contentInset": "never"
   }

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Opgaver</title>
-<meta name="theme-color" content="#EEF1EE">
+<meta name="theme-color" content="#F2F0EB">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Opgaver">
@@ -12,11 +12,16 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
 <style>
+/* ====== Design: "Kobolt" ======
+   60 % varm stengrå baggrund · 30 % hvide flader · 10 % koboltblå accent.
+   Rød bruges kun til det der haster. Én hovedknap pr. skærm med blød, farvet skygge.
+   Knapper synker ved tryk og fjedrer tilbage; ark glider hurtigt op og bremser blødt. */
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html{height:100%;overscroll-behavior-x:none;overflow-x:hidden}
 body{
   min-height:100%;
-  font-family:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  font-size:17px;letter-spacing:-0.01em;
   background:var(--bg);
   color:var(--text);
   -webkit-font-smoothing:antialiased;
@@ -24,269 +29,311 @@ body{
   -webkit-text-size-adjust:100%;
   overscroll-behavior-x:none;
   overflow-x:hidden;
+  /* føles som en app: ingen tekstmarkering eller "kopier"-menu ved langt tryk */
+  -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
 }
+input,textarea,.fv,.row-snippet,.detail-title{-webkit-user-select:text;user-select:text}
 :root{
-  --bg:#EEF1EE;
+  --bg:#F2F0EB;
   --card:#FFFFFF;
-  --text:#1B1F1D;
-  --muted:#6B726E;
-  --accent:#1F4E5A;
+  --fill:#E9E6DF;
+  --text:#1B1C22;
+  --muted:#6A6A70;
+  --accent:#2D4FD6;
   --on-accent:#FFFFFF;
-  --line:#DDE3DF;
-  --line2:#EDF1EE;
-  --input-bg:#FAFBFA;
-  --faint:#B8BFBA;
-  --check-border:#A9B1AB;
-  --switch-off:#C9D1CB;
-  --press:rgba(27,31,29,0.06);
-  --overlay:rgba(27,31,29,0.4);
-  --swatch-border:rgba(27,31,29,0.12);
-  --danger:#9B4A40;
-  --radius:10px;
-  --nav-h:60px;
+  --line:#E4E0D8;
+  --line2:#ECE9E3;
+  --input-bg:#F4F2EE;
+  --faint:#ABA9A6;
+  --check-border:#B9B6B0;
+  --switch-off:#DAD6CE;
+  --press:rgba(27,28,34,0.06);
+  --overlay:rgba(18,19,23,0.38);
+  --swatch-border:rgba(27,28,34,0.12);
+  --danger:#C8372D;
+  --lift:rgba(27,28,34,0.06);
+  --radius:18px;
+  --r-sm:12px;
+  --nav-h:58px;
+  --spring:cubic-bezier(.34,1.56,.64,1);
+  --out:cubic-bezier(.22,1,.36,1);
 }
 :root[data-theme="dark"]{
-  --bg:#171B19;
-  --card:#1F2422;
-  --text:#E6EAE7;
-  --muted:#9AA39D;
-  --on-accent:#0E1513;
-  --line:#2E3532;
-  --line2:#2A302D;
-  --input-bg:#262C29;
-  --faint:#5A625D;
-  --check-border:#5F6862;
-  --switch-off:#454D49;
+  --bg:#121317;
+  --card:#1C1E24;
+  --fill:#262931;
+  --text:#ECEDF2;
+  --muted:#9A9CA8;
+  --on-accent:#0B1240;
+  --line:#2C2F38;
+  --line2:#262931;
+  --input-bg:#23262D;
+  --faint:#5C5F69;
+  --check-border:#5E616C;
+  --switch-off:#3A3D47;
   --press:rgba(255,255,255,0.07);
   --overlay:rgba(0,0,0,0.55);
   --swatch-border:rgba(255,255,255,0.16);
-  --danger:#C4705F;
+  --danger:#FF7A6B;
+  --lift:rgba(0,0,0,0.3);
 }
 html{background:var(--bg)}
-button{font:inherit;color:inherit;background:none;border:none;cursor:pointer;text-align:left}
-input,textarea,select{font:inherit;color:inherit}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer;text-align:left;letter-spacing:inherit}
+input,textarea,select{font:inherit;color:inherit;letter-spacing:inherit}
 :focus{outline:none}
-:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+/* tekstfelter viser fokus med deres egen ramme */
+input:focus-visible,textarea:focus-visible{outline:none}
 
 #root{min-height:100vh}
-/* Beholder for skærmen, så den kan trækkes til siden ved tilbage-strøg */
 .swipe-wrap{min-height:100vh;background:var(--bg)}
 .screen{
   max-width:560px;
   margin:0 auto;
-  padding:calc(12px + env(safe-area-inset-top)) 16px calc(var(--nav-h) + env(safe-area-inset-bottom) + 24px);
+  padding:calc(6px + env(safe-area-inset-top)) 16px calc(var(--nav-h) + env(safe-area-inset-bottom) + 28px);
 }
-.screen.has-fab{padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom) + 92px)}
+.screen.has-fab{padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom) + 100px)}
 
-/* ---------- Header ---------- */
-.hdr{display:flex;align-items:center;gap:8px;min-height:48px;margin-bottom:8px}
-.hdr h1{font-size:22px;font-weight:600;letter-spacing:-0.01em;flex:1;min-width:0}
-.hdr .sub{display:block;font-size:13px;color:var(--muted);margin-top:2px;font-weight:400}
+/* ---------- Header: knapper øverst, stor titel under (som iPhones egne apps) ---------- */
+.hdr{display:flex;flex-wrap:wrap;align-items:center;gap:0 8px;min-height:44px;margin-bottom:14px}
+.hdr h1{order:10;flex:1 0 100%;font-size:32px;font-weight:700;letter-spacing:-0.025em;line-height:1.12;min-width:0;
+  display:flex;align-items:center;gap:10px;overflow-wrap:anywhere;margin-top:2px}
+.hdr > h1 + .iconbtn{margin-left:auto}
+.hdr.compact{flex-wrap:nowrap}
+.hdr.compact h1{order:0;flex:1;font-size:17px;font-weight:600;letter-spacing:-0.01em;justify-content:center;margin:0}
+.hdr .sub{display:block;font-size:14px;color:var(--muted);margin-top:2px;font-weight:400}
 .iconbtn{
   width:44px;height:44px;display:flex;align-items:center;justify-content:center;
-  color:var(--muted);border-radius:10px;flex:none;
+  color:var(--text);border-radius:50%;flex:none;position:relative;
+  transition:transform .45s var(--spring);
 }
-.iconbtn:active{background:var(--press)}
-.backbtn{margin-left:-12px;color:var(--accent)}
+.iconbtn:before{content:"";position:absolute;inset:3px;border-radius:50%;background:var(--card);box-shadow:0 1px 2px var(--lift);z-index:-1}
+.iconbtn{isolation:isolate}
+.iconbtn svg{width:20px;height:20px}
+.iconbtn:active{transform:scale(.88);transition-duration:.08s}
+.backbtn{color:var(--accent);margin-left:-4px}
+.backbtn svg{width:22px;height:22px}
 
-/* ---------- Forsidens hero ---------- */
+/* ---------- Forsiden ---------- */
+.today-top{display:flex;align-items:center;gap:8px;min-height:44px}
+.today-top .eyebrow{flex:1;font-size:15px;font-weight:600;color:var(--muted);letter-spacing:0;font-variant-numeric:tabular-nums}
+.hero-greet{font-size:32px;font-weight:700;letter-spacing:-0.025em;line-height:1.12;margin:2px 0 16px;overflow-wrap:break-word}
 .hero{
-  position:relative;overflow:hidden;
-  border:1px solid color-mix(in srgb, var(--accent) 22%, var(--line));
-  border-radius:var(--radius);
-  background:linear-gradient(140deg, color-mix(in srgb, var(--accent) 14%, var(--card)) 0%, var(--card) 62%);
-  padding:18px 16px 14px;margin-bottom:18px;
+  background:var(--accent);color:var(--on-accent);border-radius:22px;
+  padding:18px 18px 16px;display:grid;grid-template-columns:1fr auto;gap:2px 14px;align-items:center;
+  box-shadow:0 16px 30px -16px color-mix(in srgb, var(--accent) 85%, transparent), 0 2px 6px -2px color-mix(in srgb, var(--accent) 40%, transparent);
 }
-.hero-actions{position:absolute;top:6px;right:6px;display:flex}
-.hero-greet{font-size:24px;font-weight:600;letter-spacing:-0.01em;line-height:1.2;padding-right:44px;overflow-wrap:break-word}
-.hero-datetime{font-size:14px;color:var(--muted);margin-top:4px;font-variant-numeric:tabular-nums}
-.hero-weather{display:flex;align-items:center;gap:12px;margin-top:16px}
-.hero-weather .w-icon{color:var(--accent);display:flex;flex:none}
-.hero-weather .w-icon svg{width:30px;height:30px}
-.hero-weather .w-temp{font-size:26px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1}
-.hero-weather .w-info{font-size:13px;color:var(--muted);line-height:1.35}
-.w-note{font-size:13px;color:var(--muted);margin-top:14px;line-height:1.4}
+.hero-k{font-size:15px;font-weight:600;opacity:.82}
+.hero-v{font-size:26px;font-weight:700;letter-spacing:-0.02em;font-variant-numeric:tabular-nums;line-height:1.2}
+.hero-ring{grid-row:1/3;grid-column:2;width:60px;height:60px}
+.hero-ring circle{transition:stroke-dashoffset .7s var(--out)}
+.hero-pills{grid-column:1/-1;display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.hero-pills span{font-size:13.5px;font-weight:600;padding:5px 11px;border-radius:999px;background:color-mix(in srgb, var(--on-accent) 17%, transparent);font-variant-numeric:tabular-nums}
+.hero-empty{grid-column:1/-1;font-size:15px;line-height:1.4;opacity:.9;margin-top:4px}
+.hero-weather{display:flex;align-items:center;gap:8px;margin:14px 4px 0;font-size:15px;color:var(--muted);font-variant-numeric:tabular-nums}
+.hero-weather .w-icon{display:flex;color:var(--accent)}
+.hero-weather .w-icon svg{width:20px;height:20px}
+.w-note{font-size:14px;color:var(--muted);margin:14px 4px 0;line-height:1.4}
 .w-enable{
-  margin-top:14px;display:inline-flex;align-items:center;gap:7px;
-  border:1px solid var(--line);border-radius:999px;padding:8px 14px;min-height:38px;
-  font-size:13px;font-weight:500;color:var(--muted);background:var(--card);
+  margin-top:12px;display:inline-flex;align-items:center;gap:7px;
+  border-radius:999px;padding:8px 14px;min-height:44px;
+  font-size:15px;font-weight:500;color:var(--muted);
+  transition:transform .45s var(--spring);
 }
-.w-enable svg{width:16px;height:16px}
-.hero-stats{
-  margin-top:16px;padding-top:12px;
-  border-top:1px solid color-mix(in srgb, var(--accent) 12%, var(--line2));
-  font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;line-height:1.4;
-}
+.w-enable:active{transform:scale(.95);transition-duration:.08s}
+.w-enable svg{width:18px;height:18px}
 
 /* ---------- Søgning ---------- */
 .searchbar{
-  display:flex;align-items:center;gap:10px;
-  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
-  padding:0 12px;margin-bottom:12px;
+  display:flex;align-items:center;gap:8px;
+  background:var(--fill);border-radius:var(--r-sm);
+  padding:0 10px;margin-bottom:14px;
 }
-.searchbar:focus-within{border-color:var(--accent)}
-.searchbar > svg{color:var(--muted);flex:none}
-.searchbar input{flex:1;border:none;background:none;padding:13px 0;font-size:16px;min-width:0;-webkit-appearance:none;appearance:none}
+.searchbar:focus-within{box-shadow:0 0 0 2px var(--accent) inset;background:var(--card)}
+.searchbar > svg{color:var(--muted);flex:none;width:19px;height:19px}
+.searchbar input{flex:1;border:none;background:none;padding:12px 0;font-size:17px;min-width:0;-webkit-appearance:none;appearance:none}
 .searchbar input::-webkit-search-cancel-button,
 .searchbar input::-webkit-search-decoration{-webkit-appearance:none;display:none}
 .searchbar .clearbtn{
-  width:40px;height:40px;display:flex;align-items:center;justify-content:center;
+  width:44px;height:44px;display:flex;align-items:center;justify-content:center;
   color:var(--muted);flex:none;margin-right:-10px;
 }
 mark{
-  background:color-mix(in srgb, var(--accent) 26%, transparent);
-  color:inherit;border-radius:3px;padding:0 1px;
+  background:color-mix(in srgb, var(--accent) 22%, transparent);
+  color:inherit;border-radius:4px;padding:0 1px;
 }
-.res-count{font-size:13px;color:var(--muted);margin:2px 2px 12px}
-.search-hint{padding:44px 24px;text-align:center;color:var(--muted);font-size:15px;line-height:1.55}
+.res-count{font-size:14px;color:var(--muted);margin:2px 4px 10px}
+.search-hint{padding:44px 24px;text-align:center;color:var(--muted);font-size:16px;line-height:1.55}
 
 /* ---------- Kalender ---------- */
-.cal-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:10px 8px 12px;margin-bottom:12px}
+.cal-card{background:var(--card);border-radius:var(--radius);padding:10px 8px 12px;margin-bottom:12px}
 .cal-head{display:flex;align-items:center;gap:4px;margin-bottom:4px}
-.cal-title{flex:1;text-align:center;font-size:16px;font-weight:600}
+.cal-head .iconbtn:before{background:var(--fill);box-shadow:none}
+.cal-title{flex:1;text-align:center;font-size:18px;font-weight:700;letter-spacing:-0.02em;min-height:44px}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
-.cal-dow{text-align:center;font-size:11px;font-weight:600;color:var(--muted);padding:4px 0;text-transform:uppercase}
+.cal-dow{text-align:center;font-size:12px;font-weight:600;color:var(--muted);padding:4px 0}
 .cal-day{
-  position:relative;min-height:44px;border-radius:8px;
+  position:relative;min-height:46px;border-radius:14px;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  font-size:14px;font-variant-numeric:tabular-nums;color:var(--text);text-align:center;
+  font-size:16px;font-variant-numeric:tabular-nums;color:var(--text);text-align:center;
+  transition:transform .45s var(--spring), background .15s;
 }
+.cal-day:active{transform:scale(.88);transition-duration:.08s}
 .cal-day.out{color:var(--faint)}
-.cal-day.today{color:var(--accent);font-weight:600}
-.cal-day.sel{background:var(--accent);color:var(--on-accent);font-weight:600}
-.cal-dots{display:flex;gap:3px;height:6px;margin-top:4px}
+.cal-day.today{color:var(--accent);font-weight:700}
+.cal-day.sel{background:var(--accent);color:var(--on-accent);font-weight:700;
+  box-shadow:0 8px 16px -8px color-mix(in srgb, var(--accent) 85%, transparent)}
+.cal-dots{display:flex;gap:3px;height:6px;margin-top:3px}
 .cal-dots span{width:6px;height:6px;border-radius:50%}
-.cal-day.sel .cal-dots{background:var(--on-accent);border-radius:999px;padding:2px 3px;margin-top:2px;height:auto}
-.legend{display:flex;gap:8px;font-size:12px;color:var(--muted);margin:0 2px 14px;flex-wrap:wrap}
-.legend .ctag{font-size:12px}
+.cal-day.sel .cal-dots{background:var(--on-accent);border-radius:999px;padding:2px 3px;margin-top:1px;height:auto}
+.legend{display:flex;gap:6px;font-size:12px;color:var(--muted);margin:0 0 6px;flex-wrap:wrap}
+.legend .ctag{font-size:12.5px}
 
 /* farvemærkat for kategori/kalender */
 .ctag{
   display:inline-flex;align-items:center;gap:6px;
-  font-size:12.5px;font-weight:500;line-height:1;
+  font-size:13px;font-weight:600;line-height:1;
   border-radius:999px;padding:5px 10px 5px 8px;white-space:nowrap;
 }
 .ctag i{width:8px;height:8px;border-radius:50%;display:inline-block;flex:none}
-.cal-list .stripe{width:6px}
-.cal-list .row-meta{gap:8px;align-items:center}
+/* kategori som lille prik + navn */
+.dotlbl{display:inline-flex;align-items:center;gap:6px}
+.dotlbl:before{content:"";width:8px;height:8px;border-radius:50%;background:var(--c);flex:none}
 
-/* ---------- Kategori-forside ---------- */
+/* ---------- Grupperede lister (én flade, tynde skillelinjer) ---------- */
+.group{background:var(--card);border-radius:var(--radius);overflow:hidden;margin-bottom:6px}
+.group > * + *:before{content:"";position:absolute;top:0;right:0;left:16px;height:1px;background:var(--line2);pointer-events:none}
+.group > .has-check + .has-check:before{left:56px}
+
 .catrow{
-  display:flex;align-items:center;gap:12px;width:100%;
-  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
-  padding:14px;margin-bottom:8px;min-height:56px;
+  display:flex;align-items:center;gap:12px;width:100%;position:relative;
+  background:var(--card);padding:14px 12px 14px 16px;min-height:56px;
+  transition:background .15s;
 }
-.catrow:active{background:var(--input-bg)}
+.catrow:active{background:var(--press)}
 .catdot{width:10px;height:10px;border-radius:50%;flex:none;display:inline-block}
-.catname{flex:1;font-size:16px;font-weight:500;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.catcount{font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
+.catname{flex:1;font-size:17px;font-weight:500;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.catcount{font-size:16px;color:var(--muted);font-variant-numeric:tabular-nums}
 .catcount.zero{color:var(--faint)}
 .chev{color:var(--faint);flex:none;display:flex}
 
 /* ---------- Chips ---------- */
-.chiprow{display:flex;gap:8px;overflow-x:auto;padding:2px 0 12px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.chiprow{display:flex;gap:8px;overflow-x:auto;padding:2px 16px 10px;margin:0 -16px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .chiprow::-webkit-scrollbar{display:none}
 .chip{
-  flex:none;border:1px solid var(--line);background:var(--card);border-radius:999px;
-  padding:8px 14px;font-size:13px;font-weight:500;color:var(--muted);min-height:36px;
+  flex:none;background:var(--card);border-radius:999px;
+  padding:8px 14px;font-size:15px;font-weight:600;color:var(--muted);min-height:40px;
   display:inline-flex;align-items:center;gap:6px;
+  transition:transform .45s var(--spring), background .2s, color .2s;
 }
-.chip.active{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.chip:active{transform:scale(.94);transition-duration:.08s}
+.chip.active{background:var(--text);color:var(--bg)}
 .chip .catdot{width:8px;height:8px}
-.chip .n{font-variant-numeric:tabular-nums;opacity:0.75}
+.chip .n{font-variant-numeric:tabular-nums;opacity:0.6}
 
-/* ---------- Rækker/kort ---------- */
+/* ---------- Rækker ---------- */
 .item-row{
-  position:relative;overflow:hidden;
-  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
-  padding:12px 8px 12px 16px;margin-bottom:8px;width:100%;
+  position:relative;
+  background:var(--card);
+  padding:13px 6px 13px 16px;width:100%;
   display:flex;align-items:flex-start;gap:4px;text-align:left;
-  transition:transform .28s ease,opacity .28s ease;
+  transition:transform .3s ease-in, opacity .3s ease-in, background .15s;
 }
-.item-row.leaving{transform:translateX(110%);opacity:0}
+.item-row:active{background:var(--press)}
+.item-row.leaving{transform:translateX(40%);opacity:0}
 @media (prefers-reduced-motion: reduce){
   .item-row{transition:none}
 }
-.stripe{position:absolute;left:0;top:0;bottom:0;width:4px}
-.checkwrap{width:44px;height:44px;display:flex;align-items:center;justify-content:center;flex:none;margin:-8px 0 -8px -8px}
+.stripe{display:none}
+.checkwrap{width:44px;height:44px;display:flex;align-items:center;justify-content:center;flex:none;margin:-9px 0 -9px -10px}
 .checkbox{
-  width:26px;height:26px;border-radius:50%;border:1.5px solid var(--check-border);
+  width:26px;height:26px;border-radius:50%;border:2px solid var(--check-border);
   display:flex;align-items:center;justify-content:center;color:transparent;flex:none;
-  background:var(--card);
+  transition:transform .45s var(--spring), background .2s, border-color .2s;
 }
+.checkbox svg{transform:scale(.4);opacity:0;transition:transform .45s var(--spring), opacity .15s}
+.checkwrap:active .checkbox{transform:scale(.8);transition-duration:.08s}
 .checkbox.on{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
-.row-body{flex:1;min-width:0;padding-top:2px}
-.row-title{font-size:16px;font-weight:500;line-height:1.35;overflow-wrap:break-word}
-.row-title.dim{color:var(--muted)}
-.row-snippet{font-size:14px;color:var(--muted);line-height:1.4;margin-top:3px;
+.checkbox.on svg{transform:scale(1);opacity:1}
+.item-row.leaving .checkbox{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.item-row.leaving .checkbox svg{transform:scale(1);opacity:1}
+.row-body{flex:1;min-width:0;padding-top:1px}
+.row-title{font-size:17px;font-weight:500;line-height:1.3;overflow-wrap:break-word}
+.row-title .badge{vertical-align:2px;margin-left:4px}
+.row-title.dim{color:var(--muted);text-decoration:line-through;text-decoration-color:color-mix(in srgb, var(--muted) 55%, transparent)}
+.row-snippet{font-size:15px;color:var(--muted);line-height:1.4;margin-top:3px;
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:break-word}
-.row-meta{font-size:12px;color:var(--muted);margin-top:6px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
-.row-meta .warn{color:var(--danger);font-weight:500}
-.row-meta .soon{color:var(--accent);font-weight:500}
-.row-chev{width:32px;height:44px;display:flex;align-items:center;justify-content:center;color:var(--faint);flex:none;margin:-8px 0}
+.row-meta{font-size:14px;color:var(--muted);margin-top:5px;display:flex;align-items:center;gap:6px 12px;flex-wrap:wrap}
+.row-meta .warn{color:var(--danger);font-weight:600}
+.row-meta .soon{color:var(--accent);font-weight:600}
+.row-chev{width:30px;height:44px;display:flex;align-items:center;justify-content:center;color:var(--faint);flex:none;margin:-10px 0}
 .convertbtn{
   display:inline-flex;align-items:center;gap:6px;margin-top:10px;
-  border:1px solid var(--accent);color:var(--accent);border-radius:8px;
-  padding:10px 14px;font-size:14px;font-weight:500;min-height:40px;
+  background:color-mix(in srgb, var(--accent) 12%, transparent);color:var(--accent);border-radius:999px;
+  padding:10px 14px;font-size:15px;font-weight:600;min-height:44px;
+  transition:transform .45s var(--spring);
 }
-.convertbtn:active{background:color-mix(in srgb, var(--accent) 12%, transparent)}
+.convertbtn:active{transform:scale(.95);transition-duration:.08s}
 
 .badge{
-  display:inline-block;font-size:11px;font-weight:500;
-  border:1px solid var(--line);border-radius:5px;padding:2px 7px;color:var(--muted);
+  display:inline-block;font-size:12px;font-weight:600;letter-spacing:0;
+  background:var(--fill);border-radius:999px;padding:3px 8px;color:var(--muted);
   white-space:nowrap;
 }
-.badge.active{border-color:var(--accent);color:var(--accent)}
+.badge.active{background:color-mix(in srgb, var(--accent) 14%, transparent);color:var(--accent)}
 .badge.retired{opacity:0.7}
 
 /* ---------- Sektioner ---------- */
 .grouphdr{
-  display:flex;align-items:center;gap:8px;margin:18px 0 8px;
-  font-size:13px;font-weight:600;color:var(--muted);
-  text-transform:uppercase;letter-spacing:0.04em;
+  display:flex;align-items:baseline;gap:8px;margin:26px 4px 9px;
+  font-size:20px;font-weight:700;letter-spacing:-0.02em;color:var(--text);
 }
-.grouphdr .n{font-weight:500}
-.empty{padding:40px 24px;text-align:center;color:var(--muted);font-size:15px;line-height:1.5}
+.grouphdr svg{display:none}
+.grouphdr .n{font-size:16px;font-weight:500;color:var(--muted);letter-spacing:0;font-variant-numeric:tabular-nums}
+.chiprow + .grouphdr, .chiprow + div > .grouphdr:first-child{margin-top:12px}
+.empty{padding:44px 24px;text-align:center;color:var(--muted);font-size:16px;line-height:1.5}
 
 /* ---------- Detaljevisning ---------- */
-.detail-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
-  padding:14px 16px;margin-bottom:10px;position:relative;overflow:hidden}
-.detail-title{font-size:19px;font-weight:600;line-height:1.3;overflow-wrap:break-word}
-.detail-cat{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--muted);margin-top:6px}
-.typetag{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px}
-.fieldrow{padding:10px 0;border-bottom:1px solid var(--line2)}
+.detail-card{background:var(--card);border-radius:var(--radius);
+  padding:14px 16px;margin-bottom:12px;position:relative;overflow:hidden}
+.detail-head{padding:18px 18px 16px}
+.detail-title{font-size:24px;font-weight:700;letter-spacing:-0.02em;line-height:1.2;overflow-wrap:break-word}
+.detail-cat{display:flex;align-items:center;gap:7px;font-size:15px;color:var(--muted);margin-top:8px}
+.typetag{font-size:14px;font-weight:600;color:var(--accent);margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.fieldrow{padding:11px 0;border-bottom:1px solid var(--line2)}
 .fieldrow:last-child{border-bottom:none}
-.fieldrow .fl{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:3px}
-.fieldrow .fv{font-size:15px;line-height:1.45;white-space:pre-wrap;overflow-wrap:break-word}
-.fieldrow .fv.mut{color:var(--muted)}
+.fieldrow .fl{font-size:13px;font-weight:600;color:var(--muted);margin-bottom:3px}
+.fieldrow .fv{font-size:17px;line-height:1.45;white-space:pre-wrap;overflow-wrap:break-word}
+.fieldrow .fv.mut{color:var(--muted);font-size:15px}
 .linkrow{
   display:flex;align-items:center;gap:10px;width:100%;
-  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
-  padding:12px 14px;margin-bottom:8px;min-height:48px;font-size:14px;
+  background:var(--card);border-radius:var(--radius);
+  padding:12px 14px;margin-bottom:8px;min-height:52px;font-size:15px;
+  transition:transform .45s var(--spring), background .15s;
 }
-.linkrow:active{background:var(--input-bg)}
+.linkrow:active{background:var(--press);transform:scale(.98);transition-duration:.08s}
 .linkrow .lr-main{flex:1;min-width:0;display:block}
-.linkrow .lr-title{display:block;font-weight:500;font-size:15px}
-.linkrow .lr-sub{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+.linkrow .lr-title{display:block;font-weight:500;font-size:17px}
+.linkrow .lr-sub{display:block;color:var(--muted);font-size:14px;margin-top:2px}
 
 /* ---------- Segmenteret kontrol / switch ---------- */
-.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--fill);border-radius:var(--r-sm);padding:3px}
 .seg.cols3{grid-template-columns:1fr 1fr 1fr}
 .seg button{
-  border:1px solid var(--line);border-radius:8px;background:var(--card);
-  padding:11px 8px;min-height:44px;font-size:14px;font-weight:500;color:var(--muted);
-  text-align:center;
+  border-radius:9px;
+  padding:9px 6px;min-height:40px;font-size:15px;font-weight:600;color:var(--muted);
+  text-align:center;transition:background .2s, color .2s, box-shadow .2s;
 }
-.seg button.on{border-color:var(--accent);color:var(--accent);background:color-mix(in srgb, var(--accent) 9%, transparent)}
+.seg button.on{background:var(--card);color:var(--text);box-shadow:0 1px 3px var(--lift), 0 1px 1px var(--lift)}
 .switchrow{display:flex;align-items:center;gap:12px;min-height:48px;width:100%}
-.switchrow .sw-label{flex:1;font-size:15px;font-weight:500}
+.switchrow .sw-label{flex:1;font-size:17px;font-weight:500}
 .switch{
-  width:50px;height:30px;border-radius:15px;background:var(--switch-off);flex:none;position:relative;
-  transition:background .15s ease;display:inline-block;
+  width:51px;height:31px;border-radius:16px;background:var(--switch-off);flex:none;position:relative;
+  transition:background .2s ease;display:inline-block;
 }
 .switch:after{
-  content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;
-  background:#fff;transition:transform .15s ease;box-shadow:0 1px 2px rgba(27,31,29,0.2);
+  content:"";position:absolute;top:2px;left:2px;width:27px;height:27px;border-radius:50%;
+  background:#fff;transition:transform .4s var(--spring);box-shadow:0 2px 4px rgba(0,0,0,0.18);
 }
 .switch.on{background:var(--accent)}
 .switch.on:after{transform:translateX(20px)}
@@ -297,100 +344,121 @@ mark{
 /* ---------- Knapper ---------- */
 .fabwrap{
   position:fixed;left:0;right:0;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom));
-  padding:12px 16px;max-width:560px;margin:0 auto;
-  background:linear-gradient(to top, var(--bg) 65%, transparent);
-  pointer-events:none;
+  padding:14px 16px 12px;max-width:560px;margin:0 auto;
+  background:linear-gradient(to top, var(--bg) 55%, color-mix(in srgb, var(--bg) 0%, transparent));
+  pointer-events:none;z-index:15;
 }
 .btn{
   display:flex;align-items:center;justify-content:center;gap:8px;
-  min-height:48px;padding:12px 18px;border-radius:var(--radius);
-  font-size:16px;font-weight:500;width:100%;
+  min-height:52px;padding:13px 18px;border-radius:16px;
+  font-size:17px;font-weight:600;width:100%;
+  transition:transform .45s var(--spring), box-shadow .3s, background .15s;
 }
-.btn-primary{background:var(--accent);color:var(--on-accent);pointer-events:auto}
-.btn-primary:active{background:color-mix(in srgb, var(--accent) 85%, #000)}
-.btn-primary:disabled{opacity:0.4}
-.btn-secondary{background:var(--card);border:1px solid var(--line);color:var(--text)}
-.btn-ghost{color:var(--accent);background:none}
+.btn:active{transform:scale(.97) translateY(1px);transition-duration:.08s}
+.btn-primary{background:var(--accent);color:var(--on-accent);pointer-events:auto;
+  box-shadow:0 12px 24px -10px color-mix(in srgb, var(--accent) 85%, transparent), 0 2px 4px color-mix(in srgb, var(--accent) 28%, transparent)}
+.btn-primary:active{box-shadow:0 4px 10px -6px color-mix(in srgb, var(--accent) 85%, transparent)}
+.btn-primary:disabled{opacity:0.38;box-shadow:none;transform:none}
+.btn-secondary{background:var(--card);color:var(--text);box-shadow:0 1px 2px var(--lift)}
+.sheet .btn-secondary{background:var(--fill);box-shadow:none}
+.btn-ghost{color:var(--accent);background:none;font-weight:500}
 .btn-danger{background:var(--danger);color:#fff}
-.btn-dangerghost{color:var(--danger);background:none}
+.btn-dangerghost{color:var(--danger);background:none;font-weight:500}
+.save-hint{font-size:14px;color:var(--muted);text-align:center;margin-top:-2px}
 
-/* ---------- Bundnavigation ---------- */
+/* ---------- Bundnavigation (let gennemsigtig) ---------- */
 .nav{
   position:fixed;left:0;right:0;bottom:0;z-index:20;
-  background:var(--card);border-top:1px solid var(--line);
+  background:color-mix(in srgb, var(--card) 80%, transparent);
+  -webkit-backdrop-filter:blur(20px) saturate(1.6);backdrop-filter:blur(20px) saturate(1.6);
+  border-top:1px solid color-mix(in srgb, var(--line) 75%, transparent);
   padding-bottom:env(safe-area-inset-bottom);
 }
-.nav-inner{max-width:560px;margin:0 auto;display:flex;height:var(--nav-h)}
+.nav-inner{max-width:560px;margin:0 auto;display:flex;height:var(--nav-h);padding:5px 4px 0}
 .nav-item{
-  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
-  color:var(--muted);font-size:10.5px;font-weight:500;text-align:center;
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:2px;
+  color:var(--muted);font-size:11px;font-weight:600;letter-spacing:0;text-align:center;min-width:0;
 }
+.nav-item .ic{width:50px;height:30px;border-radius:999px;display:flex;align-items:center;justify-content:center;
+  transition:background .25s, transform .45s var(--spring)}
+.nav-item:active .ic{transform:scale(.86);transition-duration:.08s}
 .nav-item.active{color:var(--accent)}
+.nav-item.active .ic{background:color-mix(in srgb, var(--accent) 14%, transparent)}
 
 /* ---------- Ark (sheets) ---------- */
-.overlay{position:fixed;inset:0;background:var(--overlay);z-index:30;display:flex;align-items:flex-end}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes sheetUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.overlay{position:fixed;inset:0;background:var(--overlay);z-index:30;display:flex;align-items:flex-end;animation:fadeIn .25s ease-out}
 .sheet{
   background:var(--card);width:100%;max-width:560px;margin:0 auto;
-  border-radius:var(--radius) var(--radius) 0 0;
-  padding:20px 16px calc(16px + env(safe-area-inset-bottom));
-  max-height:88vh;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  border-radius:28px 28px 0 0;
+  padding:8px 18px calc(18px + env(safe-area-inset-bottom));
+  max-height:90vh;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  box-shadow:0 -10px 30px rgba(0,0,0,.12);
+  animation:sheetUp .42s var(--out);
 }
-.sheet h2{font-size:17px;font-weight:600;margin-bottom:14px}
-.sheet .hint{font-size:13px;color:var(--muted);margin:-8px 0 14px;line-height:1.4}
-.field{margin-bottom:12px}
-.field label{display:block;font-size:13px;font-weight:500;color:var(--muted);margin-bottom:6px}
-.field label .opt{font-weight:400;color:#A2A9A4}
+.sheet:before{content:"";display:block;width:38px;height:5px;border-radius:3px;background:var(--line);margin:0 auto 14px}
+@media (prefers-reduced-motion: reduce){ .overlay,.sheet{animation:none} }
+.sheet h2{font-size:22px;font-weight:700;letter-spacing:-0.02em;margin-bottom:16px}
+.sheet .hint{font-size:14px;color:var(--muted);margin:-6px 0 16px;line-height:1.45}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:14px;font-weight:600;color:var(--muted);margin:0 4px 6px}
+.field label .opt{font-weight:400;color:var(--faint)}
 .input{
-  width:100%;border:1px solid var(--line);border-radius:var(--radius);
-  padding:12px;font-size:16px;background:var(--input-bg);color:var(--text);
-  min-height:46px;
+  width:100%;border:none;border-radius:14px;
+  padding:13px 14px;font-size:17px;background:var(--fill);color:var(--text);
+  min-height:50px;transition:box-shadow .15s, background .15s;
 }
-.input:focus{border-color:var(--accent);outline:none}
-textarea.input{resize:none;min-height:66px;line-height:1.4}
-input[type="date"].input{-webkit-appearance:none;appearance:none}
-.sheet-actions{display:flex;flex-direction:column;gap:8px;margin-top:16px}
-.sheet .taskref{font-size:14px;color:var(--muted);margin:-6px 0 14px;line-height:1.4}
+.input::placeholder{color:var(--faint)}
+.input:focus{box-shadow:0 0 0 2px var(--accent) inset;background:var(--card);outline:none}
+textarea.input{resize:none;min-height:70px;line-height:1.4}
+input[type="date"].input,input[type="time"].input{-webkit-appearance:none;appearance:none;display:flex;align-items:center}
+.sheet-actions{display:flex;flex-direction:column;gap:8px;margin-top:20px}
+.sheet .taskref{font-size:15px;color:var(--muted);margin:-8px 0 16px;line-height:1.45}
 .menu-item{
-  display:flex;align-items:center;gap:12px;width:100%;
-  padding:14px 4px;min-height:52px;font-size:16px;font-weight:500;
-  border-bottom:1px solid var(--line2);
+  display:flex;align-items:center;gap:14px;width:100%;
+  padding:12px 4px;min-height:60px;font-size:17px;font-weight:600;
+  border-bottom:1px solid var(--line2);transition:background .15s;border-radius:4px;
 }
+.menu-item:active{background:var(--press)}
 .menu-item:last-of-type{border-bottom:none}
-.menu-item svg{color:var(--muted);flex:none}
+.menu-item svg{color:var(--accent);flex:none;width:22px;height:22px}
 .menu-item .mi-title{display:block}
-.menu-item .mi-sub{display:block;font-size:12.5px;color:var(--muted);font-weight:400;margin-top:1px}
-.menu-item.light .mi-title{color:var(--muted)}
+.menu-item .mi-sub{display:block;font-size:14px;color:var(--muted);font-weight:400;margin-top:1px}
+.menu-item.light .mi-title{color:var(--text)}
 
 /* ---------- Indstillinger ---------- */
-.settings-section{margin-bottom:28px}
-.settings-section > h2{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:10px}
+.settings-section{margin-bottom:30px}
+.settings-section > h2{font-size:20px;font-weight:700;letter-spacing:-0.02em;margin:0 4px 10px}
 .setcat{
-  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
-  padding:8px 12px;margin-bottom:8px;
+  background:var(--card);border-radius:14px;
+  padding:4px 10px 4px 12px;margin-bottom:8px;
 }
-.setcat-row{display:flex;align-items:center;gap:6px}
+.setcat-row{display:flex;align-items:center;gap:4px}
 .swatchbtn{width:44px;height:44px;display:flex;align-items:center;justify-content:center;flex:none;margin-left:-8px}
 .swatch{width:22px;height:22px;border-radius:50%;border:1px solid var(--swatch-border);display:inline-block}
-.setcat input{border:none;background:none;flex:1;font-size:16px;padding:10px 0;min-width:0}
-.setcat .del{color:var(--danger);font-size:14px;font-weight:500;padding:10px 4px;min-height:44px;flex:none}
-.ordbtn{width:38px;height:44px;display:flex;align-items:center;justify-content:center;color:var(--muted);flex:none}
+.setcat input{border:none;background:none;flex:1;font-size:17px;padding:11px 0;min-width:0}
+.setcat .del{color:var(--danger);font-size:15px;font-weight:600;padding:10px 6px;min-height:44px;flex:none}
+.ordbtn{width:40px;height:44px;display:flex;align-items:center;justify-content:center;color:var(--muted);flex:none}
 .ordbtn:disabled{opacity:0.25}
-.palette{display:flex;gap:10px;flex-wrap:wrap;padding:6px 0 10px 2px}
-.palette button{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid var(--swatch-border)}
-.palette button.sel{outline:2px solid var(--accent);outline-offset:2px}
-.settings-note{font-size:13px;color:var(--muted);line-height:1.5;margin-top:8px}
+.palette{display:flex;gap:12px;flex-wrap:wrap;padding:8px 0 10px 2px}
+.palette button{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid var(--swatch-border);
+  transition:transform .45s var(--spring)}
+.palette button:active{transform:scale(.85);transition-duration:.08s}
+.palette button.sel{outline:2.5px solid var(--text);outline-offset:3px}
+.settings-note{font-size:14px;color:var(--muted);line-height:1.5;margin:8px 4px 0}
 .filelabel{cursor:pointer;position:relative}
 .filelabel input{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden}
 
 /* ---------- Versioner ---------- */
 .verrow{
   display:flex;align-items:baseline;gap:10px;width:100%;
-  padding:12px 4px;min-height:46px;border-bottom:1px solid var(--line2);font-size:14px;
+  padding:12px 2px;min-height:48px;border-bottom:1px solid var(--line2);font-size:16px;
 }
 .verrow:last-of-type{border-bottom:none}
-.verrow .v-name{font-weight:500}
-.verrow .v-date{color:var(--muted);font-size:13px}
-.verrow .v-cur{margin-left:auto;font-size:12px;color:var(--accent);font-weight:500}
+.verrow .v-name{font-weight:600}
+.verrow .v-date{color:var(--muted);font-size:14px}
+.verrow .v-cur{margin-left:auto;font-size:13px;color:var(--accent);font-weight:600}
 </style>
 </head>
 <body>
@@ -411,6 +479,7 @@ const V1_BACKUP_KEY = 'lukas-todo-v1-backup';
 const PALETTE = ['#5B7C99','#6E9075','#A8865C','#8A6E8F','#5E8D87','#A56A5A','#8A8B5F','#8B9089'];
 
 const ACCENTS = {
+  kobolt:   {label:'Kobolt',        light:'#2D4FD6', dark:'#7E98FF'},
   petrol:   {label:'Petroleumsblå', light:'#1F4E5A', dark:'#7FB0BC'},
   skov:     {label:'Skovgrøn',      light:'#3D6B4F', dark:'#8FBFA3'},
   blomme:   {label:'Blomme',        light:'#6E4E73', dark:'#B597BA'},
@@ -418,7 +487,9 @@ const ACCENTS = {
   graablaa: {label:'Gråblå',        light:'#46617A', dark:'#93AFC7'},
   grafit:   {label:'Grafit',        light:'#3A4440', dark:'#A9B5AF'}
 };
-const DEFAULT_SETTINGS = {theme:'auto', accent:'petrol', name:'', showWeather:false};
+const DEFAULT_SETTINGS = {theme:'auto', accent:'kobolt', name:'', showWeather:false};
+/* Nyt design (v3): ældre data får Kobolt som accent én gang; derefter kan farven frit ændres */
+const DESIGN_VERSION = 3;
 
 const CAL_LABEL = {work:'Arbejde', private:'Privat'};
 const CAL_COLORS = {work:'#46617A', private:'#6E9075'};
@@ -633,6 +704,11 @@ function Sheet({onClose, children, label}){
 }
 
 function Empty({text}){ return html`<div className="empty">${text}</div>`; }
+
+/* Kategori vist som lille farvet prik + navn */
+function CatLabel({c}){
+  return c ? html`<span className="dotlbl" style=${{'--c':c.color}}>${c.name}</span>` : null;
+}
 
 /* Farvemærkat der viser hvilken kategori eller kalender noget hører til */
 function CTag({color, label}){
@@ -999,7 +1075,7 @@ function entriesForDay(data, dateStr){
 
 function taskMeta(t, category, showCategory){
   const parts = [];
-  if(showCategory && category) parts.push(html`<span key="cat">${category.name}</span>`);
+  if(showCategory && category) parts.push(html`<${CatLabel} key="cat" c=${category}/>`);
   if(t.status==='done'){
     if(t.completedAt) parts.push(html`<span key="done">Færdig ${fmtDate(t.completedAt)}</span>`);
   }else{
@@ -1026,7 +1102,7 @@ function TaskRow({task, category, showCategory, onOpen, onToggleDone, onConvert}
   };
   const meta = taskMeta(task, category, showCategory);
   return html`
-    <div className=${'item-row'+(leaving?' leaving':'')} role="button" tabIndex="0"
+    <div className=${'item-row'+(task.idea?'':' has-check')+(leaving?' leaving':'')} role="button" tabIndex="0"
          onClick=${()=>onOpen(task)}
          onKeyDown=${(e)=>{if(e.key==='Enter' && e.target===e.currentTarget) onOpen(task);}}>
       <span className="stripe" style=${{background:category?category.color:'transparent'}}></span>
@@ -1049,10 +1125,8 @@ function TaskRow({task, category, showCategory, onOpen, onToggleDone, onConvert}
 function PlainRow({item, category, showCategory, onOpen, snippet, meta, badge}){
   return html`
     <button className="item-row" onClick=${()=>onOpen(item)}>
-      <span className="stripe" style=${{background:category?category.color:'transparent'}}></span>
-      <span style=${{width:'8px'}}></span>
       <div className="row-body">
-        <div className="row-title">${item.title} ${badge||null}</div>
+        <div className="row-title">${item.title}${badge||null}</div>
         ${snippet ? html`<div className="row-snippet">${snippet}</div>` : null}
         ${meta && meta.length ? html`<div className="row-meta">${meta}</div>` : null}
       </div>
@@ -1104,8 +1178,7 @@ function TodayScreen({data, settings, api, onOpenItem, onOpenSettings, onSearch}
     weatherEl = html`
       <div className="hero-weather">
         <span className="w-icon"><${WI}/></span>
-        <span className="w-temp">${weather.data.temp}°</span>
-        <span className="w-info">${info.label}<br/>Højeste ${weather.data.max}° · laveste ${weather.data.min}°</span>
+        <span><b style=${{color:'var(--text)',fontWeight:600}}>${weather.data.temp}°</b> · ${info.label} · ${weather.data.max}° / ${weather.data.min}°</span>
       </div>`;
   }else if(weather.status==='denied'){
     weatherEl = html`<div className="w-note">Vejret kræver adgang til din placering — tillad det i telefonens indstillinger for Safari/appen.</div>`;
@@ -1115,53 +1188,70 @@ function TodayScreen({data, settings, api, onOpenItem, onOpenSettings, onSearch}
     weatherEl = html`<div className="w-note">Henter vejret …</div>`;
   }
 
-  const nothing = followUps.length===0 && myDay.length===0 && deadlines.length===0;
-  const statsParts = [];
-  if(myDay.length) statsParts.push(myDay.length+' på Min dag');
-  if(followUps.length) statsParts.push(followUps.length+(followUps.length===1?' opfølgning':' opfølgninger'));
-  if(deadlines.length) statsParts.push(deadlines.length+(deadlines.length===1?' deadline':' deadlines'));
-  const stats = statsParts.length
-    ? statsParts.join(' · ')
-    : 'Ingenting haster — vælg opgaver til Min dag inde i en kategori.';
+  /* Min dag-ringen: hvor mange af dagens opgaver der er klaret i dag */
+  const doneToday = data.items.filter(i=>i.type==='task' && i.status==='done' && i.doneFromMyDay
+    && i.completedAt && dstr(new Date(i.completedAt))===today).length;
+  const dayTotal = myDay.length + doneToday;
+  const frac = dayTotal ? doneToday/dayTotal : 0;
+  const RING = 2*Math.PI*24;
+  const pills = [];
+  if(followUps.length) pills.push(followUps.length+(followUps.length===1?' opfølgning':' opfølgninger'));
+  if(deadlines.length) pills.push(deadlines.length+(deadlines.length===1?' deadline':' deadlines'));
 
   return html`
     <div className="screen">
-      <div className="hero">
-        <div className="hero-actions">
-          <button className="iconbtn" aria-label="Søg" onClick=${onSearch}><${Icon.search}/></button>
-          <button className="iconbtn" aria-label="Indstillinger" onClick=${onOpenSettings}><${Icon.gear}/></button>
-        </div>
-        <h1 className="hero-greet">${settings.name ? greet+', '+settings.name : greet}</h1>
-        <div className="hero-datetime">${dateStr.charAt(0).toUpperCase()+dateStr.slice(1)} · kl. ${timeStr}</div>
-        ${weatherEl}
-        <div className="hero-stats">${stats}</div>
+      <div className="today-top">
+        <span className="eyebrow">${dateStr.charAt(0).toUpperCase()+dateStr.slice(1)} · ${timeStr}</span>
+        <button className="iconbtn" aria-label="Søg" onClick=${onSearch}><${Icon.search}/></button>
+        <button className="iconbtn" aria-label="Indstillinger" onClick=${onOpenSettings}><${Icon.gear}/></button>
       </div>
+      <h1 className="hero-greet">${settings.name ? greet+', '+settings.name : greet}</h1>
+
+      <div className="hero">
+        <span className="hero-k">Min dag</span>
+        ${dayTotal ? html`
+          <svg className="hero-ring" viewBox="0 0 60 60" aria-hidden="true">
+            <circle cx="30" cy="30" r="24" fill="none" stroke="currentColor" strokeOpacity="0.22" strokeWidth="6"/>
+            <circle cx="30" cy="30" r="24" fill="none" stroke="currentColor" strokeWidth="6" strokeLinecap="round"
+              strokeDasharray=${RING} strokeDashoffset=${RING*(1-frac)} transform="rotate(-90 30 30)"/>
+          </svg>` : null}
+        <span className="hero-v">${!dayTotal ? 'Intet valgt endnu' : (doneToday===dayTotal ? 'Alt klaret' : doneToday+' af '+dayTotal+' klaret')}</span>
+        ${!dayTotal ? html`<span className="hero-empty">Vælg opgaver til Min dag inde i en kategori.</span>` : null}
+        ${pills.length ? html`<span className="hero-pills">${pills.map(p=>html`<span key=${p}>${p}</span>`)}</span>` : null}
+      </div>
+      ${weatherEl}
 
       ${followUps.length ? html`
         <div>
-          <div className="grouphdr"><${Icon.bell}/> Opfølgninger</div>
+          <div className="grouphdr">Opfølgninger <span className="n">${followUps.length}</span></div>
+          <div className="group">
           ${followUps.map(i=>html`
             <${PlainRow} key=${i.id} item=${i} category=${cats[i.categoryId]} onOpen=${onOpenItem}
               badge=${html`<span className="badge">${TYPE_LABEL[i.type]}</span>`}
               snippet=${i.followUp.note || null}
-              meta=${[html`<span key="d" className=${daysUntil(i.followUp.due)<0?'warn':'soon'}>Følg op ${fmtDay(i.followUp.due)}</span>`,
-                      cats[i.categoryId]?html`<span key="c">${cats[i.categoryId].name}</span>`:null]}/>`)}
+              meta=${[html`<span key="d" className=${daysUntil(i.followUp.due)<=0?'warn':'soon'}>Følg op ${fmtDay(i.followUp.due)}</span>`,
+                      html`<${CatLabel} key="c" c=${cats[i.categoryId]}/>`]}/>`)}
+          </div>
         </div>` : null}
 
       ${myDay.length ? html`
         <div>
-          <div className="grouphdr"><${Icon.sun}/> Min dag</div>
+          <div className="grouphdr">Min dag <span className="n">${myDay.length}</span></div>
+          <div className="group">
           ${myDay.map(t=>html`
             <${TaskRow} key=${t.id} task=${t} category=${cats[t.categoryId]} showCategory=${true}
               onOpen=${onOpenItem} onToggleDone=${api.toggleDone}/>`)}
+          </div>
         </div>` : null}
 
       ${deadlines.length ? html`
         <div>
-          <div className="grouphdr"><${Icon.calendar}/> Deadlines</div>
+          <div className="grouphdr">Deadlines <span className="n">${deadlines.length}</span></div>
+          <div className="group">
           ${deadlines.map(t=>html`
             <${TaskRow} key=${t.id} task=${t} category=${cats[t.categoryId]} showCategory=${true}
               onOpen=${onOpenItem} onToggleDone=${api.toggleDone}/>`)}
+          </div>
         </div>` : null}
     </div>`;
 }
@@ -1179,6 +1269,7 @@ function CategoriesScreen({data, onOpenCategory, onOpenSettings, onSearch}){
         <button className="iconbtn" aria-label="Søg" onClick=${onSearch}><${Icon.search}/></button>
         <button className="iconbtn" aria-label="Indstillinger" onClick=${onOpenSettings}><${Icon.gear}/></button>
       </div>
+      <div className="group">
       ${cats.map(c=>{
         const n = counts[c.id]||0;
         return html`
@@ -1189,6 +1280,7 @@ function CategoriesScreen({data, onOpenCategory, onOpenSettings, onSearch}){
             <span className="chev"><${Icon.chevron}/></span>
           </button>`;
       })}
+      </div>
     </div>`;
 }
 
@@ -1226,8 +1318,10 @@ function CategoryScreen({data, categoryId, section, onSection, onBack, onOpenIte
       ? html`<${Empty} text="Ingenting udestår her."/>`
       : groups.map(([label,arr])=>html`
           <div key=${label}>
-            <div className="grouphdr">${label} <span className="n">· ${arr.length}</span></div>
+            <div className="grouphdr">${label} <span className="n">${arr.length}</span></div>
+            <div className="group">
             ${arr.map(t=>html`<${TaskRow} key=${t.id} task=${t} category=${cat} onOpen=${onOpenItem} onToggleDone=${api.toggleDone}/>`)}
+            </div>
           </div>`);
   }else if(section==='ideas'){
     const arr = [...buckets.ideas].sort(byDesc('createdAt'));
@@ -1262,12 +1356,16 @@ function CategoryScreen({data, categoryId, section, onSection, onBack, onOpenIte
       ? html`<${Empty} text="Ingen opgaver er færdige endnu."/>`
       : buckets.done.map(t=>html`<${TaskRow} key=${t.id} task=${t} category=${cat} onOpen=${onOpenItem} onToggleDone=${api.toggleDone}/>`);
   }
+  if(section!=='tasks' && Array.isArray(content)) content = html`<div className="group" style=${{marginTop:'6px'}}>${content}</div>`;
+
+  /* Hovedknappen siger præcis hvad der sker */
+  const addLabel = {ideas:'Ny idé', decisions:'Ny beslutning', agreements:'Ny aftale', notes:'Ny note', standards:'Ny standard'}[section] || 'Tilføj';
 
   return html`
     <div className="screen has-fab">
       <div className="hdr">
         <button className="iconbtn backbtn" aria-label="Tilbage" onClick=${onBack}><${Icon.back}/></button>
-        <h1><${CatDot} color=${cat.color} size="10px"/> ${' '}${cat.name}</h1>
+        <h1><${CatDot} color=${cat.color} size="14px"/>${cat.name}</h1>
       </div>
       <div className="chiprow">
         ${CAT_SECTIONS.map(([k,label])=>html`
@@ -1278,7 +1376,7 @@ function CategoryScreen({data, categoryId, section, onSection, onBack, onOpenIte
       ${content}
       <div className="fabwrap">
         <button className="btn btn-primary" onClick=${()=>api.startAdd(categoryId, section)}>
-          <${Icon.plus}/> Tilføj
+          <${Icon.plus}/> ${addLabel}
         </button>
       </div>
     </div>`;
@@ -1306,12 +1404,12 @@ function DecisionsScreen({data, filter, onFilter, onOpenItem, onSearch}){
       </div>
       ${decided.length===0
         ? html`<${Empty} text="Ingen beslutninger endnu."/>`
-        : decided.map(i=>{
+        : html`<div className="group" style=${{marginTop:'6px'}}>${decided.map(i=>{
             const c = catById[i.categoryId];
             return html`<${PlainRow} key=${i.id} item=${i} category=${c} onOpen=${onOpenItem}
               snippet=${i.what||null}
-              meta=${[html`<span key="d">${fmtDay(i.decidedOn)}</span>`, c?html`<span key="c">${c.name}</span>`:null]}/>`;
-          })}
+              meta=${[html`<span key="d">${fmtDay(i.decidedOn)}</span>`, html`<${CatLabel} key="c" c=${c}/>`]}/>`;
+          })}</div>`}
     </div>`;
 }
 
@@ -1343,12 +1441,12 @@ function StandardsScreen({data, filter, onFilter, statusFilter, onStatusFilter, 
       </div>
       ${list.length===0
         ? html`<${Empty} text="Ingen standarder her endnu. Opret dem inde i en kategori."/>`
-        : list.map(i=>{
+        : html`<div className="group" style=${{marginTop:'6px'}}>${list.map(i=>{
             const c = catById[i.categoryId];
             return html`<${PlainRow} key=${i.id} item=${i} category=${c} onOpen=${onOpenItem}
               badge=${html`<span className=${'badge'+(i.status==='active'?' active':i.status==='retired'?' retired':'')}>${STD_STATUS[i.status]}</span>`}
-              meta=${[c?html`<span key="c">${c.name}</span>`:null, html`<span key="d">Senest ændret ${fmtDate(i.updatedAt)}</span>`]}/>`;
-          })}
+              meta=${[html`<${CatLabel} key="c" c=${c}/>`, html`<span key="d">Ændret ${fmtDate(i.updatedAt)}</span>`]}/>`;
+          })}</div>`}
     </div>`;
 }
 
@@ -1420,23 +1518,21 @@ function SearchScreen({data, query, onQuery, typeFilter, onTypeFilter, onBack, o
       ${results.length ? html`
         <p className="res-count">${results.length} ${results.length===1?'resultat':'resultater'}</p>` : null}
 
-      <div className="cal-list">
+      <div className=${results.length ? 'cal-list group' : 'cal-list'}>
         ${results.map(r=>{
           const c = r.kind==='event' ? null : catById[r.obj.categoryId];
           const badge = statusBadge(r);
           return html`
             <button key=${r.kind+r.id} className="item-row" onClick=${()=>onOpenResult(r)}>
-              <span className="stripe" style=${{background: r.kind==='event' ? CAL_COLORS[r.obj.calendar] : (c?c.color:'transparent')}}></span>
-              <span style=${{width:'8px'}}></span>
               <div className="row-body">
                 <div className="row-title">
                   <${Highlight} text=${r.title} terms=${terms}/>
-                  ${' '}<span className="badge">${KIND_LABEL[r.kind]}</span>
+                  <span className="badge">${KIND_LABEL[r.kind]}</span>
                 </div>
                 ${r.snippet ? html`
                   <div className="row-snippet"><${Highlight} text=${r.snippet} terms=${terms}/></div>` : null}
                 <div className="row-meta">
-                  ${c ? html`<${CTag} color=${c.color} label=${c.name}/>` : null}
+                  <${CatLabel} c=${c}/>
                   ${r.kind==='event' ? html`<${CTag} color=${CAL_COLORS[r.obj.calendar]} label=${CAL_LABEL[r.obj.calendar]}/>` : null}
                   ${r.date ? html`<span>${fmtDay(r.date)}</span>` : null}
                   ${badge ? html`<span>${badge}</span>` : null}
@@ -1568,11 +1664,9 @@ function CalendarScreen({data, initialDate, onOpenItem, api, onSearch}){
 
       <div className="grouphdr">${selLabel.charAt(0).toUpperCase()+selLabel.slice(1)}</div>
       ${empty ? html`<${Empty} text="Ingenting i kalenderen denne dag."/>` : null}
-      <div className="cal-list">
+      <div className=${empty ? 'cal-list' : 'cal-list group'}>
         ${[...allDayE, ...timedE].map(e=>html`
           <button key=${e.id} className="item-row" onClick=${()=>api.startEditEvent(e)}>
-            <span className="stripe" style=${{background:CAL_COLORS[e.calendar]}}></span>
-            <span style=${{width:'8px'}}></span>
             <div className="row-body">
               <div className="row-title">${e.title}</div>
               <div className="row-meta">
@@ -1589,7 +1683,7 @@ function CalendarScreen({data, initialDate, onOpenItem, api, onSearch}){
           return html`<${PlainRow} key=${item.id+kind} item=${item} category=${c} onOpen=${onOpenItem}
             badge=${html`<span className="badge">${kindLabel[kind]}</span>`}
             meta=${[
-              c?html`<${CTag} key="c" color=${c.color} label=${c.name}/>`:null,
+              html`<${CatLabel} key="c" c=${c}/>`,
               html`<span key="t">${TYPE_LABEL[item.type]}</span>`
             ]}/>`;
         })}
@@ -1607,7 +1701,7 @@ function CalendarScreen({data, initialDate, onOpenItem, api, onSearch}){
 
 function ItemScreen({data, itemId, onBack, onOpenItem, api}){
   const item = data.items.find(i=>i.id===itemId);
-  if(!item) return html`<div className="screen"><div className="hdr">
+  if(!item) return html`<div className="screen"><div className="hdr compact">
     <button className="iconbtn backbtn" aria-label="Tilbage" onClick=${onBack}><${Icon.back}/></button>
     <h1>Ikke fundet</h1></div></div>`;
   const cat = data.categories.find(c=>c.id===item.categoryId);
@@ -1617,8 +1711,7 @@ function ItemScreen({data, itemId, onBack, onOpenItem, api}){
     .map(r=>data.items.find(i=>i.id===r.toId)).filter(Boolean);
 
   const head = html`
-    <div className="detail-card">
-      <span className="stripe" style=${{background:cat?cat.color:'transparent'}}></span>
+    <div className="detail-card detail-head">
       <div className="typetag">${item.type==='task' && item.idea ? 'Idé' : TYPE_LABEL[item.type]}
         ${item.type==='standard' ? html` <span className=${'badge'+(item.status==='active'?' active':item.status==='retired'?' retired':'')}>${STD_STATUS[item.status]}</span>` : null}
       </div>
@@ -1762,9 +1855,9 @@ function ItemScreen({data, itemId, onBack, onOpenItem, api}){
 
   return html`
     <div className="screen">
-      <div className="hdr">
+      <div className="hdr compact">
         <button className="iconbtn backbtn" aria-label="Tilbage" onClick=${onBack}><${Icon.back}/></button>
-        <h1 style=${{fontSize:'17px'}}>${TYPE_LABEL[item.type]}</h1>
+        <h1>${TYPE_LABEL[item.type]}</h1>
         <button className="iconbtn" aria-label="Rediger" onClick=${()=>api.startEdit(item)}><${Icon.pen}/></button>
       </div>
       ${head}
@@ -1820,7 +1913,7 @@ function SettingsScreen({data, settings, isDark, onBack, api}){
             value=${settings.theme} onChange=${(v)=>api.setSetting('theme', v)}/>
         </div>
         <div className="field">
-          <label>Accentfarve · ${(ACCENTS[settings.accent]||ACCENTS.petrol).label}</label>
+          <label>Accentfarve · ${(ACCENTS[settings.accent]||ACCENTS.kobolt).label}</label>
           <div className="palette">
             ${Object.entries(ACCENTS).map(([k,a])=>html`
               <button key=${k} style=${{background: isDark ? a.dark : a.light}}
@@ -1892,6 +1985,7 @@ function FormSheet({title, onClose, onSave, canSave, saveLabel, children, contex
       ${children}
       <div className="sheet-actions">
         <button className="btn btn-primary" disabled=${!canSave} onClick=${onSave}>${saveLabel||'Gem'}</button>
+        ${!canSave ? html`<p className="save-hint">Skriv en titel for at kunne gemme.</p>` : null}
         <button className="btn btn-ghost" onClick=${onClose}>Annuller</button>
       </div>
     <//>`;
@@ -1929,7 +2023,7 @@ function TaskForm({initial, title, contextLine, onSave, onClose}){
   });
   const set = (k)=>(v)=>setF(s=>({...s,[k]:v}));
   return html`
-    <${FormSheet} title=${title} contextLine=${contextLine} onClose=${onClose}
+    <${FormSheet} saveLabel="Gem opgave" title=${title} contextLine=${contextLine} onClose=${onClose}
       canSave=${!!f.title.trim()} onSave=${()=>onSave({
         title:f.title.trim(), description:f.description.trim(),
         deadline:f.deadline||null, priority:f.priority, myDay:f.myDay,
@@ -1952,7 +2046,7 @@ function IdeaForm({initial, onSave, onClose}){
   const [t,setT] = useState(initial.title||'');
   const [d,setD] = useState(initial.description||'');
   return html`
-    <${FormSheet} title=${initial.id?'Rediger idé':'Ny idé'} onClose=${onClose}
+    <${FormSheet} saveLabel="Gem idé" title=${initial.id?'Rediger idé':'Ny idé'} onClose=${onClose}
       canSave=${!!t.trim()} onSave=${()=>onSave({title:t.trim(), description:d.trim()})}>
       <${TextField} label="Hvad tænker du på?" value=${t} onInput=${setT} autoFocus=${true}/>
       <${AreaField} label="Note" value=${d} onInput=${setD} optional=${true} rows="2"/>
@@ -1968,7 +2062,7 @@ function DecisionForm({initial, onSave, onClose}){
   });
   const set=(k)=>(v)=>setF(s=>({...s,[k]:v}));
   return html`
-    <${FormSheet} title=${initial.id?'Rediger beslutning':'Ny beslutning'} onClose=${onClose}
+    <${FormSheet} saveLabel="Gem beslutning" title=${initial.id?'Rediger beslutning':'Ny beslutning'} onClose=${onClose}
       canSave=${!!f.title.trim()} onSave=${()=>onSave({
         title:f.title.trim(), decidedOn:f.decidedOn||todayStr(), what:f.what.trim(),
         rationale:f.rationale.trim(), involved:f.involved.trim(), notes:f.notes.trim(),
@@ -1992,7 +2086,7 @@ function AgreementForm({initial, onSave, onClose}){
   });
   const set=(k)=>(v)=>setF(s=>({...s,[k]:v}));
   return html`
-    <${FormSheet} title=${initial.id?'Rediger aftale':'Ny aftale'} onClose=${onClose}
+    <${FormSheet} saveLabel="Gem aftale" title=${initial.id?'Rediger aftale':'Ny aftale'} onClose=${onClose}
       canSave=${!!f.title.trim()} onSave=${()=>onSave({
         title:f.title.trim(), agreedOn:f.agreedOn||todayStr(), what:f.what.trim(),
         withWhom:f.withWhom.trim(), deadline:f.deadline||null,
@@ -2011,7 +2105,7 @@ function NoteForm({initial, onSave, onClose}){
   const [f,setF] = useState({title: initial.title||'', noteDate: initial.noteDate||todayStr(), text: initial.text||''});
   const set=(k)=>(v)=>setF(s=>({...s,[k]:v}));
   return html`
-    <${FormSheet} title=${initial.id?'Rediger note':'Ny note'} onClose=${onClose}
+    <${FormSheet} saveLabel="Gem note" title=${initial.id?'Rediger note':'Ny note'} onClose=${onClose}
       canSave=${!!f.title.trim()} onSave=${()=>onSave({title:f.title.trim(), noteDate:f.noteDate||todayStr(), text:f.text.trim()})}>
       <${TextField} label="Titel" value=${f.title} onInput=${set('title')} autoFocus=${!initial.id}/>
       <${AreaField} label="Note" value=${f.text} onInput=${set('text')} rows="4"/>
@@ -2024,7 +2118,7 @@ function StandardForm({initial, onSave, onClose}){
   const [fields,setFields] = useState({...(initial.fields||{})});
   const setF=(k)=>(v)=>setFields(s=>({...s,[k]:v}));
   return html`
-    <${FormSheet} title=${initial.id?'Rediger standard':'Ny standard'} onClose=${onClose}
+    <${FormSheet} saveLabel="Gem standard" title=${initial.id?'Rediger standard':'Ny standard'} onClose=${onClose}
       canSave=${!!title.trim()} onSave=${()=>onSave({title:title.trim(), fields})}
       contextLine=${initial.id?null:'Kun titlen er påkrævet — resten kan udfyldes løbende. Nye standarder starter som kladde.'}>
       <${TextField} label="Titel" value=${title} onInput=${setTitle} autoFocus=${!initial.id}/>
@@ -2064,7 +2158,7 @@ function EventForm({initial, onSave, onDelete, onClose}){
       <div className="sheet-actions">
         <button className="btn btn-primary" disabled=${!f.title.trim() || !f.date}
           onClick=${()=>onSave({title:f.title.trim(), calendar:f.calendar, date:f.date,
-            start:f.start||null, end:(f.start&&f.end)?f.end:null, note:f.note.trim()})}>Gem</button>
+            start:f.start||null, end:(f.start&&f.end)?f.end:null, note:f.note.trim()})}>Gem begivenhed</button>
         ${initial.id ? html`<button className="btn btn-dangerghost" onClick=${onDelete}>Slet begivenhed</button>` : null}
         <button className="btn btn-ghost" onClick=${onClose}>Annuller</button>
       </div>
@@ -2109,7 +2203,8 @@ function FollowUpSheet({item, onSave, onClose}){
       <${TextField} label="Note" value=${note} onInput=${setNote} optional=${true} placeholder="Fx hvem eller hvad du venter på"/>
       <p className="hint">Elementet dukker op under Opfølgninger på forsiden, når datoen nås.</p>
       <div className="sheet-actions">
-        <button className="btn btn-primary" disabled=${!due} onClick=${()=>onSave({due, note:note.trim()})}>Gem</button>
+        <button className="btn btn-primary" disabled=${!due} onClick=${()=>onSave({due, note:note.trim()})}>Gem opfølgning</button>
+        ${!due ? html`<p className="save-hint">Vælg en dato for at kunne gemme.</p>` : null}
         ${item.followUp && item.followUp.due ? html`
           <button className="btn btn-dangerghost" onClick=${()=>onSave(null)}>Fjern opfølgning</button>` : null}
         <button className="btn btn-ghost" onClick=${onClose}>Annuller</button>
@@ -2127,7 +2222,7 @@ function WaitingSheet({task, onSave, onClose}){
       <${TextField} label="Hvad/hvem afventer du?" value=${who} onInput=${setWho} optional=${true} autoFocus=${true}/>
       <${DateField} label="Hvornår skal du følge op?" value=${due} onInput=${setDue} optional=${true}/>
       <div className="sheet-actions">
-        <button className="btn btn-primary" onClick=${()=>onSave(who.trim(), due||null)}>Gem</button>
+        <button className="btn btn-primary" onClick=${()=>onSave(who.trim(), due||null)}>Sæt til afventer</button>
         <button className="btn btn-ghost" onClick=${onClose}>Annuller</button>
       </div>
     <//>`;
@@ -2146,7 +2241,7 @@ function ConvertIdeaSheet({task, onSave, onSkip, onClose}){
       </div>
       <p className="hint">Skriver du en linje, journaliseres den som en beslutning med dagens dato — og opgaven kobles til den.</p>
       <div className="sheet-actions">
-        <button className="btn btn-primary" onClick=${()=>onSave(note.trim())}>Gem</button>
+        <button className="btn btn-primary" onClick=${()=>onSave(note.trim())}>Gør til opgave</button>
         <button className="btn btn-ghost" onClick=${onSkip}>Spring over</button>
       </div>
     <//>`;
@@ -2312,11 +2407,22 @@ function App(){
   const isDark = settings.theme==='dark' || (settings.theme==='auto' && sysDark);
   useEffect(()=>{
     document.documentElement.dataset.theme = isDark ? 'dark' : 'light';
-    const acc = ACCENTS[settings.accent] || ACCENTS.petrol;
+    const acc = ACCENTS[settings.accent] || ACCENTS.kobolt;
     document.documentElement.style.setProperty('--accent', isDark ? acc.dark : acc.light);
     const meta = document.querySelector('meta[name="theme-color"]');
-    if(meta) meta.content = isDark ? '#171B19' : '#EEF1EE';
+    if(meta) meta.content = isDark ? '#121317' : '#F2F0EB';
+    /* I iOS-appen: uret og batteriet øverst følger appens lyse/mørke tema */
+    const cap = window.Capacitor;
+    if(cap && cap.isNativePlatform && cap.isNativePlatform() && cap.nativePromise){
+      cap.nativePromise('StatusBar','setStyle',{style: isDark ? 'DARK' : 'LIGHT'}).catch(()=>{});
+    }
   },[isDark, settings.accent]);
+
+  /* Nyt design: skift én gang til Kobolt-accenten */
+  useEffect(()=>{
+    if((data.settings||{}).design===DESIGN_VERSION) return;
+    setData(d=>({...d, settings: Object.assign({}, DEFAULT_SETTINGS, d.settings||{}, {accent:'kobolt', design:DESIGN_VERSION})}));
+  },[(data.settings||{}).design]);
 
   const view = stack[stack.length-1];
   const push = (v)=>setStack(s=>[...s,v]);
@@ -2376,12 +2482,12 @@ function App(){
   const api = {
     /* Opgaver */
     toggleDone: (t)=>{
-      if(t.status==='done') patchItem(t.id,{status:'not_started', completedAt:null});
-      else patchItem(t.id,{status:'done', completedAt:nowIso(), myDay:false});
+      if(t.status==='done') patchItem(t.id,{status:'not_started', completedAt:null, doneFromMyDay:false});
+      else patchItem(t.id,{status:'done', completedAt:nowIso(), myDay:false, doneFromMyDay:!!t.myDay});
     },
     setTaskStatus: (t,s)=>{
       if(s===t.status) return;
-      if(s==='done'){ patchItem(t.id,{status:'done', completedAt:nowIso(), myDay:false}); return; }
+      if(s==='done'){ patchItem(t.id,{status:'done', completedAt:nowIso(), myDay:false, doneFromMyDay:!!t.myDay}); return; }
       if(s==='waiting'){ setSheet({type:'waiting', itemId:t.id}); return; }
       patchItem(t.id,{status:s, completedAt:null});
     },
@@ -2652,19 +2758,19 @@ function App(){
     <nav className="nav" aria-label="Hovednavigation">
       <div className="nav-inner">
         <button className=${'nav-item'+(navRoot==='today'?' active':'')} onClick=${()=>resetTo('today')}>
-          <${Icon.sun}/> I dag
+          <span className="ic"><${Icon.sun}/></span>I dag
         </button>
         <button className=${'nav-item'+(navRoot==='calendar'?' active':'')} onClick=${()=>resetTo('calendar')}>
-          <${Icon.calendar}/> Kalender
+          <span className="ic"><${Icon.calendar}/></span>Kalender
         </button>
         <button className=${'nav-item'+(navRoot==='categories'?' active':'')} onClick=${()=>resetTo('categories')}>
-          <${Icon.grid}/> Kategorier
+          <span className="ic"><${Icon.grid}/></span>Kategorier
         </button>
         <button className=${'nav-item'+(navRoot==='decisions'?' active':'')} onClick=${()=>resetTo('decisions')}>
-          <${Icon.stamp}/> Beslutninger
+          <span className="ic"><${Icon.stamp}/></span>Beslutninger
         </button>
         <button className=${'nav-item'+(navRoot==='standards'?' active':'')} onClick=${()=>resetTo('standards')}>
-          <${Icon.book}/> Standarder
+          <span className="ic"><${Icon.book}/></span>Standarder
         </button>
       </div>
     </nav>`;
